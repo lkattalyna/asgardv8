@@ -21,8 +21,7 @@
     {!! csrf_field() !!}
     <div class="card card-default">
         <div class="card-header with-border">
-            <p>Este formulario permitirá consignar y almacenar las automatizaciones que se planean sean implementadas
-                como mejoras.</p>
+            <p>Informacion Basica De La Automatizacion.</p>
         </div>
         <div class="card-body">
             <table class="table table-bordered table-hover">
@@ -78,18 +77,6 @@
                                 @endforeach
                             </select>
                         @endif
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        <label for="asgard" class="text-center">Debe ser publicado en Asgard</label>
-                    </th>
-                    <td>
-                        <select class="form-control" name="asgard" id="asgard" style="width: 100%;" required>
-                            <option></option>
-                            <option value="0">No</option>
-                            <option value="1">Si</option>
-                        </select>
                     </td>
                 </tr>
                 <tr>
@@ -222,6 +209,27 @@
                         @endif
                     </td>
                 </tr>
+            </table>
+        </div>
+    </div>
+    <div class="card card-default">
+        <div class="card-header with-border">
+            <h3 class="card-title">Impacto de la automatización</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th>
+                        <label for="asgard" class="text-center">Debe ser publicado en Asgard</label>
+                    </th>
+                    <td>
+                        <select class="form-control" name="asgard" id="asgard" style="width: 100%;" required>
+                            <option></option>
+                            <option value="0">No</option>
+                            <option value="1">Si</option>
+                        </select>
+                    </td>
+                </tr>
 
                 <tr>
                     <th>
@@ -236,6 +244,7 @@
                         </div>
                     </td>
                 </tr>
+
                 <tr>
                     <th>
                         <label for="end" class="text-md-right">Fecha de finalización del periodo:</label>
@@ -249,27 +258,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <th>
-                        <label for="dependence" class="text-center">Depende de automatización</label>
-                    </th>
-                    <td>
-                        <div class="input-group">
-                            <div class="input-group-append">
-                                <span class="input-group-text" data-toggle="popover" data-html="true" data-placement="left" title="Ayuda" data-content="Si esta es una automatización que pertenece a otra, se debe seleccionar la automatización padre,
-                                                en caso contrario seleccionar No depende">
-                                    <i class="fas fa-question-circle"></i>
-                                </span>
-                            </div>
-                            <select class="form-control" name="dependence" id="dependence" required>
-                                <option value="0" selected>No depende</option>
-                                @foreach ($improvements as $improvement)
-                                <option value="{{ $improvement->id }}">{{ $improvement->playbook_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </td>
-                </tr>
+
                 <tr>
                     <th>
                         <label for="deliverable" class="text-md-right">Entregable</label>
@@ -285,6 +274,29 @@
                         </div>
                     </td>
                 </tr>
+
+                <tr>
+    <th>
+        <label for="dependence" class="text-center">Depende de automatización</label>
+    </th>
+    <td>
+        <div class="input-group">
+            <div class="input-group-append">
+                <span class="input-group-text" data-toggle="popover" data-html="true" data-placement="left" title="Ayuda" data-content="Si esta es una automatización que pertenece a otra, se debe seleccionar la automatización padre,
+                                    en caso contrario seleccionar No depende">
+                    <i class="fas fa-question-circle"></i>
+                </span>
+            </div>
+            <select class="form-control" name="dependence" id="dependence" required>
+                <option value="0" selected>No depende</option>
+                @foreach ($improvements as $improvement)
+                <option value="{{ $improvement->id }}">{{ $improvement->playbook_name }}</option>
+                @endforeach
+            </select>
+        </div>
+    </td>
+</tr>
+                
                 <tr>
                     <th>
                         <label for="name" class="text-md-right">Nombre del playbook o automatización</label>
@@ -302,15 +314,7 @@
                         </div>
                     </td>
                 </tr>
-            </table>
-        </div>
-    </div>
-    <div class="card card-default">
-        <div class="card-header with-border">
-            <h3 class="card-title">Impacto de la automatización</h3>
-        </div>
-        <div class="card-body">
-            <table class="table table-bordered table-hover">
+                
                 <tr>
                     <th>
                         <label for="frequency" class="text-md-right">Frecuencia de la ejecución</label>
