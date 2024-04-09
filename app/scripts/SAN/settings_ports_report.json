@@ -1,0 +1,1 @@
+{"frames_tx":"1","frames_rx":"1","enc_in":"1","crc_err":"1","crc_g_eof":"1","too_shrt":"1","too_long":"1","bad_eof":"1","enc_out":"1","disc_c3":"1","link_fail":"1","loss_sync":"1","loss_sig":"1","frjt":"1","fbsy":"1","c3_timeout_tx":"1","c3_timeout_rx":"1","pcs_err":"1","uncor_err":"1"}

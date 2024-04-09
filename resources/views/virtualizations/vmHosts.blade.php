@@ -1,0 +1,170 @@
+@extends('adminlte::page')
+@section('content_header')
+    <h1>Reporte de virtual hosts</h1><hr>
+@stop
+@section('plugins.Datatables', true)
+@section('content')
+    @can('virtualization-user')
+
+    <div class="card card-default">
+        <div class="card-body">
+            <div class="float-sm-right" id="btn_table"></div>
+        </div>
+    </div>
+    @include('layouts.messages')
+    <div class="card">
+        <!-- /.card-header -->
+        <div class="card-header">
+            <h3 class="card-title">Virtual hosts registrados en el sistema</h3>
+            <div class="float-sm-right"><h6>Última actualización: {{ $log }}</h6></div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-body">
+            <!-- /.table-responsive -->
+            <table id="example1" class="table table-striped table-bordered" >
+                <thead>
+                    <tr>
+                        <th>Segmento</th>
+                        <th>Nombre</th>
+                        <th>VCenter</th>
+                        <th>Cluster</th>
+                        <th>Vendor</th>
+                        <th>Codigo de servicio</th>
+                        <th>IP</th>
+                        <th>Memoria</th>
+                        <th>CPU</th>
+                        <th>Capacidad total de disco</th>
+                        <th>Versión EXSI</th>
+                        <th>Power State</th>
+                        <th>Connection State</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($vmHosts as $vmHost)
+                        <tr>
+                            <td>{{ $vmHost->segment }}</td>
+                            <td>{{ $vmHost->name }}</td>
+                            <td>{{ $vmHost->vcenter }}</td>
+                            <td>{{ $vmHost->cluster }}</td>
+                            <td>{{ $vmHost->vendor }}</td>
+                            <td>{{ $vmHost->service_code }}</td>
+                            <td>{{ $vmHost->ip }}</td>
+                            <td>{{ $vmHost->memory }} GB</td>
+                            <td>{{ $vmHost->cpu }} MHrz</td>
+                            <td>{{ $vmHost->total_disk }} GB</td>
+                            <td>{{ $vmHost->esxi_version }}</td>
+                            <td>{{ $vmHost->power_state }}</td>
+                            <td>{{ $vmHost->connection_state }}</td>
+                            <td style="text-align:center; ">
+                                <a href="{{ route('virtualization.VMHostShow',$vmHost->id) }}" target="_blank" title="Ver detalles">
+                                    <button class="btn btn-sm btn-default">
+                                        <i class="fa fa-eye" style="color: #0d6aad"></i>
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <th></th>
+                    <th>VCenter</th>
+                    <th>Cluster</th>
+                    <th colspan="7"></th>
+                    <th>Power State</th>
+                    <th>Connection State</th>
+                    <th></th>
+                </tfoot>
+            </table>
+        </div>
+        <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+    @else
+        @include('layouts.forbidden_1')
+    @endcan
+@stop
+@section('js')
+    <script>
+        $(document).ready(function () {
+            var table = $('#example1').DataTable({
+                initComplete: function () {
+                    this.api().columns([1,2,10,11]).every( function () {
+                        var column = this;
+                        var select = $('<select><option value="">Todos</option></select>')
+                            .appendTo( $(column.footer()).empty() )
+                            .on( 'change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search( val ? '^'+val+'$' : '', true, false )
+                                    .draw();
+                            } );
+
+                        column.data().unique().sort().each( function ( d, j ) {
+                            select.append( '<option value="'+d+'">'+d+'</option>' )
+                        } );
+                    } );
+                },
+                "language": {
+                    "sProcessing": "Procesando...",
+                    "sLengthMenu": "Mostrar _MENU_ registros",
+                    "sZeroRecords": "No se encontraron resultados",
+                    "sEmptyTable": "Ningún dato disponible en esta tabla",
+                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Buscar:",
+                    "sUrl": "",
+                    "sInfoThousands": ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst": "Primero",
+                        "sLast": "Último",
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                },
+                "scrollX": true,
+            });
+            $( '#btn_table' ).empty();
+            // Cargar botones para acciones de exportar de datatables
+            var buttons = new $.fn.dataTable.Buttons(table, {
+                buttons: [
+                    {
+                        extend: 'copy',
+                        text:'Copiar',
+                        className: 'btn btn-sm btn-default',
+                    },{
+                        extend: 'print',
+                        text:'Imprimir',
+                        //className: 'btn btn-sm btn-danger',
+                        className: 'btn btn-sm btn-default',
+                    },{
+                        extend: 'collection',
+                        className: 'btn btn-sm btn-default',
+                        text: 'Exportar',
+                        buttons: [
+                            'csv',
+                            'excel',
+                            'pdf',
+                        ]
+                    },{
+                        extend: 'colvis',
+                        text: 'Visualización',
+                        className: 'btn btn-sm btn-default',
+                    }
+                ],
+            }).container().appendTo( '#btn_table' );
+
+            // fin create table
+        });
+    </script>
+@endsection

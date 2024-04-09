@@ -1,0 +1,1 @@
+<button onclick="javascript:alert('Hola mundo, desde test');">Saludo</button>
