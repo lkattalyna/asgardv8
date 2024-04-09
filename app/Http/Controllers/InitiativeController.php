@@ -164,13 +164,10 @@ class InitiativeController extends Controller
         // Obtener segmentos y capas de servicio
         $segments = RegServiceSegment::orderBy('name')->get();
         $criterias = initiative_criteria::where('initiative_id', $id)->get();
-        $service_layers = RegServiceLayer::orderBy('name')->get();
-
-        // Obtener valores únicos de las capas de servicio
-        $unique_service_layers = $service_layers->unique('name');
+        $service_layers = RegServiceLayer::orderBy('name')->where('segment_id', $datosInitiative->segment_id)->get();
 
         // Pasar los datos a la vista
-        return view('initiative.edit', compact('datosInitiative', 'segments', 'criterias', 'unique_service_layers'));
+        return view('initiative.edit', compact('datosInitiative', 'segments', 'criterias', 'service_layers'));
     }
 
     /**

@@ -74,7 +74,7 @@
                     <td>
                         <select class="form-control" name="service_layer" id="service_layer" style="width: 100%;" required>
                             <option></option>
-                            @foreach ($unique_service_layers as $service_layer)
+                            @foreach ($service_layers as $service_layer)
                             <option value="{{ $service_layer->id }}" @if ($datosInitiative->service_layer_id == $service_layer->id) selected @endif>
                                 {{ $service_layer->name }}
                             </option>
