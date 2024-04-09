@@ -1,3 +1,4 @@
+<!-- Estoy modificando el readme -->
 <!-- Pasos para despliegue en local
 //===================================================================================================
         1.	Instalar xampp, Laragon, wampserver o de su preferencia para el despliegue del proyecto en local preferiblemente con php versión 7.4 o superior.

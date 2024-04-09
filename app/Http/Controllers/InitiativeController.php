@@ -164,6 +164,8 @@ class InitiativeController extends Controller
         // Obtener segmentos y capas de servicio
         $segments = RegServiceSegment::orderBy('name')->get();
         $criterias = initiative_criteria::where('initiative_id', $id)->get();
+        
+        //Obtener las capas de servicio del segmento seleccionado
         $service_layers = RegServiceLayer::orderBy('name')->where('segment_id', $datosInitiative->segment_id)->get();
 
         // Pasar los datos a la vista
