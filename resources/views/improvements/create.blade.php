@@ -26,6 +26,10 @@
         </div>
         <div class="card-body">
             <table class="table table-bordered table-hover">
+                @if (request()->has('initiative_id'))
+                    <!-- Campo oculto para enviar el ID de la iniciativa -->
+                    <input type="hidden" name="initiative_id" value="{{ request()->get('initiative_id') }}">
+                @endif
                 <th>
                     <label for="segment" class="text-center">Segmento</label>
                 </th>

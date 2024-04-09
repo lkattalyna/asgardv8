@@ -121,6 +121,7 @@ class RegImprovementController extends Controller
             'layer_id' => $request->input('layer'),
             'start_date' => $request->input('start'),
             'end_date' => $request->input('end'),
+            'initiative_id' => $request->input('initiative_id'),
         ]);
         $progress = $this->getProgress($improvement);
         RegImprovementHistory::create([

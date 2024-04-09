@@ -35,4 +35,7 @@ class RegImprovement extends Model
     public function serviceLayer(){
         return $this->BelongsTo(RegServiceLayer::class,'layer_id','id');
     }
+    public function initiative(){
+        return $this->BelongsTo(Models\Initiative::class,'initiative_id','id');
+    }
 }
