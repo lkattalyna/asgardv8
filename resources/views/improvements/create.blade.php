@@ -21,7 +21,7 @@
     {!! csrf_field() !!}
     <div class="card card-default">
         <div class="card-header with-border">
-            <p>Informacion Basica De La Automatizacion.</p>
+        <h3 class="card-title">Información básica de la Automatización</h3>
         </div>
         <div class="card-body">
             <table class="table table-bordered table-hover">
@@ -214,7 +214,7 @@
     </div>
     <div class="card card-default">
         <div class="card-header with-border">
-            <h3 class="card-title">Impacto de la automatización</h3>
+            <h3 class="card-title">Impacto de la Automatización</h3>
         </div>
         <div class="card-body">
             <table class="table table-bordered table-hover">
