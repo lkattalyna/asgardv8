@@ -68,7 +68,7 @@
                     <td>{{ $initiative->initiative_name }}</td>
                     <td>{{ $initiative->segment->name }}</td>
                     <td>{{ $initiative->service_layer->name }}</td>
-                    <td>{{ $initiative->state }}</td>
+                    <td>{{ $initiative->initiative_state->status_name }}</td>
                     <td>{{ $initiative->created_at }}</td>
                     <td>
 
@@ -77,7 +77,7 @@
                                 <i class="fa fa-eye" style="color: #0d6aad"></i>
                             </button>
                         </a>
-                        @if (Auth::user()->id == 1 || $initiative->state === 'Registrado')
+                        @if (Auth::user()->id == 1 || $initiative->state === 1)
                         <a href="{{ url('/initiative/edit/' . $initiative->id) }}" title="Editar">
                             <button class="btn btn-sm btn-default">
                                 <i class="fa fa-edit" style="color: #0d6aad"></i>

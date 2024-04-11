@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Traits\ImprovementProgressTrait;
 use Illuminate\Support\Facades\Log;
+use App\Models\Initiative;
 
 class RegImprovementController extends Controller
 {
@@ -132,6 +133,12 @@ class RegImprovementController extends Controller
             'evidence' => 'N/A',
             'type' => 'register',
         ]);
+
+        // Actializar estado de la iniciativa
+        Initiative::where('id', '=', $request->input('initiative_id'))->update([
+            'state' => 2
+        ]);
+
         return  redirect()->route('improvements.index')->with('success',"Se ha creado la automatización número $improvement->id para su tramite");
     }
 

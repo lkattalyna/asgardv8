@@ -99,7 +99,7 @@
                 </div>
                 <div class="form-group">
                     <label>Estado</label>
-                    <p> {{ $initiative->state }}</p>
+                    <p> {{ $initiative_state->status_name }}</p>
                     <hr>
                 </div>
                 <div class="form-group">

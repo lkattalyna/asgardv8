@@ -14,6 +14,7 @@ use App\RegServiceSegment;
 use App\User;
 use App\Models\initiative_criteria;
 use App\RegServiceLayer;
+use App\Models\initiative_states;
 //LIBRERIA PARA GUARDAR ARCHIVOS
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -38,8 +39,10 @@ class InitiativeController extends Controller
         foreach ($datos['Initiative'] as $initiative) {
             $segment = RegServiceSegment::find($initiative->segment_id);
             $service_layer = RegServiceLayer::find($initiative->service_layer_id);
+            $initiative_state = initiative_states::find($initiative->state);
             $initiative->segment = $segment; // Agregar el segmento a cada iniciativa
             $initiative->service_layer = $service_layer; // Agregar torre a cada iniciativa
+            $initiative->initiative_state = $initiative_state;
         }
         Log::info($datos);
         //$segment = RegServiceSegment::where('id', $datos['Initiative']->segment_id)->first();
@@ -57,7 +60,8 @@ class InitiativeController extends Controller
         Log::info('initiative.create');
         $segments = RegServiceSegment::orderBy('name')->get();
         $service_layers = RegServiceLayer::orderBy('name')->get();
-        return view('initiative.create', compact('segments', 'service_layers'));
+        $initiative_states = initiative_states::orderBy('status_name')->get();
+        return view('initiative.create', compact('segments', 'service_layers', 'initiative_states'));
 
         //return view('initiative.create');
     }
@@ -95,7 +99,9 @@ class InitiativeController extends Controller
             'execution_time_manual' => $request->execution_time_manual,
             'advantages' => $request->advantages,
             'attachments' => '',
-            'owner_id' => Auth::user()->id
+            'owner_id' => Auth::user()->id,
+            'state' => 1  // estado registrado,
+
         ]);
 
         //GUARDA EL ARCHIVO ADJUNTO
@@ -143,10 +149,11 @@ class InitiativeController extends Controller
         $criterias = initiative_criteria::where('initiative_id', $id)->get();
         $segment = RegServiceSegment::where('id', $initiative->segment_id)->first();
         $service_layer = RegServiceLayer::where('id', $initiative->service_layer_id)->first();
+        $initiative_state = initiative_states::where('id', $initiative->state)->first();
         // MUESTRA EL USUARIO QUE CREA EL REGISTRO
         $user = User::where('id', $initiative->owner_id)->first();
         Log::info($segment);
-        return view('initiative.show', compact('initiative', 'user', 'criterias', 'segment', 'service_layer'));
+        return view('initiative.show', compact('initiative', 'user', 'criterias', 'segment', 'service_layer', 'initiative_state'));
         //
     }
 

@@ -268,24 +268,7 @@
 
         </div>
 
-        <!-- USUARIO ADMINISTRADOR(1) / PERMISOS PARA CAMBIO DE ESTADO -->
-        @if ($datosInitiative->owner_id === 1)
-        <tr>
-            <th>
-                <label for="state" class="text-center">Estado</label>
-            </th>
-            <td>
-                <select class="form-control" name="state" id="state" style="width: 100%;" required>
-                    <option></option>
-                    <option value="Registrado" @if ($datosInitiative->state == 'Registrado') selected @endif>Registrado
-                    </option>
-                    <option value="QA" @if ($datosInitiative->state == 'QA') selected @endif>QA</option>
-                    <option value="UAT" @if ($datosInitiative->state == 'UAT') selected @endif>UAT</option>
-                </select>
-            </td>
-        </tr>
-        @endif
-        </table>
+      </table>
         <div class="card-footer">
             <button type="submit" class="btn btn-sm btn-danger">
                 <i class="fa fa-save"></i> Guardar
