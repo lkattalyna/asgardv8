@@ -268,9 +268,8 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fa fa-calendar-day"></i></span>
                                     </div>
-                                    <input type="text" name="start" id="start" class="form-control input-md"
-                                        value="{{ old('start') }}"
-                                        pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" readonly required>
+                                    <input type="date" name="start" id="start" class="form-control input-md"
+                                        value="{{ old('start') }}" onchange="validarFechas()" required>
                                 </div>
                             </td>
                         </tr>
@@ -284,9 +283,8 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fa fa-calendar-day"></i></span>
                                     </div>
-                                    <input type="text" name="end" id="end" class="form-control input-md"
-                                        value="{{ old('end') }}"
-                                        pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" readonly required>
+                                    <input type="date" name="end" id="end" class="form-control input-md"
+                                        value="{{ old('end') }}" onchange="validarFechas()" required>
                                 </div>
                             </td>
                         </tr>
@@ -522,6 +520,17 @@
 @stop
 @section('js')
     <script>
+        function validarFechas() {
+            var fechaInicio = new Date(document.getElementById('start').value);
+            var fechaFinalizacion = new Date(document.getElementById('end').value);
+
+            if (fechaFinalizacion < fechaInicio) {
+                alert('La fecha de finalización no puede ser anterior a la fecha de inicio.');
+                document.getElementById('end').value = '';
+                document.getElementById('end').focus();
+            }
+        }
+
         window.onload = function() {
             document.getElementById('descripcion').value = getParameterByName('descripcion');
             document.getElementById('task_type').value = getParameterByName('task_type');
@@ -641,7 +650,7 @@
                     select = '';
                     for (var i = 0; i < data.length; i++) {
                         select += '<option value="' + data[i].id + '">' + data[i].name +
-                        '</option>';
+                            '</option>';
                     }
                     $("#layer").html(select);
                 });
