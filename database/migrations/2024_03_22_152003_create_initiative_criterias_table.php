@@ -14,8 +14,12 @@ class CreateInitiativeCriteriasTable extends Migration
     public function up()
     {
         Schema::create('initiative_criterias', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
+            $table->integer('initiative_id')->unsigned();
+            $table->string('criterio');
             $table->timestamps();
+            $table->foreign('initiative_id')->references('id')->on('initiatives')->onDelete('cascade');
+
         });
     }
 

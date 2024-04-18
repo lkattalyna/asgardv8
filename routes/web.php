@@ -998,11 +998,16 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('initiative/edit/{id}', 'InitiativeController@edit')->name('initiative.edit');
     //Route::patch('initiative/edit/{id}', 'InitiativeController@update')->name('initiative.update');
     Route::get('initiative/show/{id}', 'InitiativeController@show')->name('initiative.show');
-    
     Route::delete('/initiative/{id}', 'InitiativeController@destroy')->name('initiative.destroy');
     Route::get('/initiative/file/{attachments}', 'InitiativeController@file')->name('initiative.file');
     Route::post('guardar-improvement', 'ImprovementController@store')->name('guardar_improvement');
     Route::get('/initiative/getLayers/{id}', 'InitiativeController@getLayers')->name('initiative.getLayers');
+
+
+
+    //VCostumer clientes
+    Route::resource('vcostumer', 'VcostumerController')->except('show');
+    Route::get('vcostumer/index', 'VcostumerController@index')->name('vcostumer.index');
 
 });
 
