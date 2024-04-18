@@ -1,155 +1,91 @@
 @extends('adminlte::page')
+
 @section('content_header')
-    <h1> Formulario de creación de vcenter</h1><hr>
+    <h1>Formulario de Registro de Clientes</h1>
+    <hr>
 @stop
+
 @section('plugins.Select2', true)
-@section('plugins.Sweetalert2', true)
-@section('plugins.Input-Mask', true)
+@section('plugins.Date-Picker', true)
+
 @section('content')
-    <!-- @can('devState-create')
-        <div class="card card-default">
-            <div class="card-header">
-                <div class="card-tools pull-right">
-                    <a class="btn btn-sm btn-danger" href="{{ route('vcenters.index')}}">
-                        <i class="fa fa-reply"></i> Volver
-                    </a>
-                </div>
+    <div class="card card-default">
+        <div class="card-body">
+            <div class="float-sm-right">
+                <a class="btn btn-sm btn-danger" href="{{ route('vcostumer.index') }}">
+                    <i class="fa fa-reply"></i> Volver
+                </a>
             </div>
         </div>
-        @include('layouts.formError')
-        <form action="{{route('vcenters.store') }}" method="post" id="formfield">
-            {!! csrf_field() !!}
-            <div class="card card-default">
-                <div class="card-header with-border">
-                    <h3 class="card-title">Formulario de creación de vcenter</h3>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered table-hover">
-                        <tr>
-                            <th>
-                                <label for="segment" class="text-md-right">Segmentos</label>
-                            </th>
-                            <td>
-                                <div class="input-group">
-                                    <select name="segment" id="segment" class="form-control" style="width: 100%" required>
-                                        <option></option>
-                                        <option value="1">Empresas Y Negocios</option>
-                                        <option value="2">Personas Y Hogares</option>
-                                        <option value="3">Convergencia</option>
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                <label for="login" class="text-md-right">Cuenta Login</label>
-                            </th>
-                            <td>
-                                <div class="input-group">
-                                    <select name="login" id="login" class="form-control" style="width: 100%" required>
-                                        <option></option>
-                                        <option value="1">datacenterdhs\asgard.cli</option>
-                                        <option value="2">claroco\dfgftcla1</option>
-                                        <option value="3">co-attla\ctxadmin</option>                                    
-                                        <option value="4">root</option>
-                                        <option value="6">asgard.cli@vsphere.local</option>
-                                        <option value="8">cloudclaro\asgard.cli</option>
-                                        <option value="9">COLCLOUD\vmwarepowercli</option>
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <label for="ip">{{ __('Ip del vcenter') }}</label>
-                            </td>
-                            <td>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-laptop"></i></span>
-                                    </div>
-                                    <input type="text" name="ip" id="ip" class="form-control" data-inputmask="'alias': 'ip'" data-mask="" im-insert="true" required>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                <label for="alias" class="text-md-right">Digite alias del vcenter</label>
-                            </th>
-                            <td>
-                                <div class="input-group">
-                                    <input type="text" name="alias" id="alias" class="form-control" value="{{ old('alias') }}"
-                                    pattern="^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-].{1,}" placeholder="Ingrese manualmente el ALIAS" required>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                <label for="status" class="text-md-right">Estado Vcenter</label>
-                            </th>
-                            <td>
-                                <div class="input-group">
-                                    <select name="status" id="status" class="form-control" style="width: 100%" required>
-                                        <option></option>
-                                        <option value="1">Encendido</option>
-                                        <option value="0">Apagado</option>
-                                    </select>
-                                </div>
-                            </td>
-                        </tr>
+    </div>
+    @include('layouts.formError')
 
-                    </table>
-                </div>
-                <div class="card-footer">
-                    <button type="button" class="btn btn-sm btn-danger" id="sendForm">
-                        <i class="fa fa-save"></i> Guardar
-                    </button>
-                </div>
+    <form action="" method="post" enctype="multipart/form-data">
+        {!! csrf_field() !!}
+        <div class="card card-default">
+            <div class="card-header with-border">
+                <p>Este formulario permitirá registrar un nuevo cliente</p>
             </div>
-        </form>
-    @else
-        @include('layouts.forbidden_1')
-    @endcan
-    @stop -->
-    @section('js')
+            <div class="card-body">
+                <table class="table table-bordered table-hover">
+                    <!--nombre del cliente-->
+                    <tr>
+                        <th>
+                            <label for="initiativeName" class="text-center">Nombre del Cliente</label>
+                        </th>
+                        <td>
+                            <div class="input-group">
+                                <textarea name="customerName" id="customerName" class="form-control" placeholder="Nombre del Cliente" maxlength="200" rows="2" required>{{ old('customerName') }}</textarea>
+                                <div class="input-group-append">
+                                    <span class="input-group-text" data-toggle="popover" data-html="true" data-placement="left" title="Ayuda" data-content="Indique el nombre del cliente">
+                                        <i class="fas fa-question-circle"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!--NIT del cliente-->
+                    <tr>
+                        <th>
+                            <label for="initiativeName" class="text-center">Nit del Cliente</label>
+                        </th>
+                        <td>
+                            <div class="input-group">
+                                <textarea name="customerNIT" id="customerNIT" class="form-control" placeholder="NIT del Cliente" maxlength="200" rows="2" required>{{ old('customerNIT') }}</textarea>
+                                <div class="input-group-append">
+                                    <span class="input-group-text" data-toggle="popover" data-html="true" data-placement="left" title="Ayuda" data-content="Indique el NIT del cliente">
+                                        <i class="fas fa-question-circle"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!--Estado del cliente-->
+                    <tr>
+                        <th>
+                            <label for="customerState" class="text-md-right">Estado del Cliente</label>
+                        </th>
+                        <td>
+                            <select class="form-control" name="customerState" id="customerState" style="width: 100%;" required>
+                                <option></option>
+                                <option value="Acción">Registrado</option>
+                                <option value="Consulta">No Registrado</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </form>
+
     <script>
-        $(document).ready(function() {
-            $('#segment').select2({
-                placeholder: "--Seleccione--",
-                allowClear: true
-            });
-            $('#login').select2({
-                placeholder: "--Seleccione--",
-                allowClear: true
-            });
-            $('#status').select2({
-                placeholder: "--Seleccione--",
-                allowClear: true
-            });
-            $('#formfield').keypress(function(e) {
-                if (e.which == 13) {
-                    return false;
-                }
-            });
-            $('#sendForm').on('click', function(){
-                swal({
-                    title: "¿Esta seguro?",
-                    text: "Esta completamente seguro de ejecutar la tarea con los parametros seleccionados",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                    buttons: ["Cancelar", "Si, estoy seguro"],
-                }).then((seguro) => {
-                    if (seguro) {
-                        if($('#formfield')[0].checkValidity()){
-                            $('#formfield').submit();
-                        }else{
-                            $('#formfield')[0].reportValidity();
-                        }
-                    }
-                });
-            });
+        // Obtener el campo de entrada por su ID
+        var customerNameInput = document.getElementById('customerName');
+
+        // Agregar un evento de escucha para el evento 'input'
+        customerNameInput.addEventListener('input', function() {
+            // Convertir el valor del campo a mayúsculas y actualizar el valor del campo
+            this.value = this.value.toUpperCase();
         });
     </script>
 @stop
-

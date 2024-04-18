@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\vcostumer;
 use Illuminate\Http\Request;
-
+use App\Models\Cliente;
 class VcostumerController extends Controller
 {
     /**
@@ -26,58 +26,31 @@ class VcostumerController extends Controller
      */
     public function create()
     {
-        // //
-        // $segmentos = vcostumer::distinct('fk_segmentID')->get('fk_segmentID');
-        // $logins = vcostumer::distinct('fk_loginAccountID')->get('fk_loginAccountID');
-
-        //dd($segmento);
-        // return view('vcostumer.create',compact('segmentos','logins'));
+        return view('vcostumer.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        // //
-        // $this->validate($request, [
-        //     'segment' => 'required',
-        //     'login' => 'required',
-        //     'ip' => 'required',
-        //     'alias' => 'required',
-        //     'status' => 'required',
-        // ]);
-        // //dd($request->login);
-        // vcostumer::create([
-        //     'fk_segmentID' => $request->segment,
-        //     'fk_loginAccountID' => $request->login,
-        //     'vcenterIp' => $request->ip,
-        //     'vcenterAlias' => $request->alias,
-        //     'vcenterStatus' => $request->status,
-        // ]);
-        // return redirect()->route('vcostumer.index')->with('success', 'El vcenter ha sido creado con éxito');
-    }
+        // Validar los datos del formulario
+        $validatedData = $request->validate([
+            'customerName' => 'required|string|max:255',
+            'customerNIT' => 'required|string|max:255',
+            'customerState' => 'required|string|max:255',
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\vcostumer  $vcostumer
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Request $request)
-    {
-        //
-    }
+        // Crear un nuevo cliente
+        $cliente = new Cliente();
+        $cliente->nombre = $request->input('customerName');
+        $cliente->nit = $request->input('customerNIT');
+        $cliente->estado = $request->input('customerState');
+        // Puedes agregar más campos según sea necesario
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\vcostumer  $vcostumer
-     * @return \Illuminate\Http\Response
-     */
+        // Guardar el cliente en la base de datos
+        $cliente->save();
+
+        // Redireccionar a alguna página después de guardar el cliente
+        return redirect()->route('initiative.index')->with('success', 'Cliente registrado exitosamente');
+    }
     public function edit(Request $request)
     {
         // //

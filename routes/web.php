@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\InitiativeController;
+use App\Http\Controllers\VcostumerController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
@@ -1008,6 +1009,8 @@ Route::group(['middleware' => ['auth']], function() {
     //VCostumer clientes
     Route::resource('vcostumer', 'VcostumerController')->except('show');
     Route::get('vcostumer/index', 'VcostumerController@index')->name('vcostumer.index');
+    Route::get('vcostumer/create', 'VcostumerController@create')->name('vcostumer.create');
+    Route::post('vcostumer', 'VcostumerController@store')->name('vcostumer.store');
 
 });
 
