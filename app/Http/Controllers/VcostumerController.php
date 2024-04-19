@@ -30,27 +30,31 @@ class VcostumerController extends Controller
     }
 
     public function store(Request $request)
-    {
-        // Validar los datos del formulario
-        $validatedData = $request->validate([
-            'customerName' => 'required|string|max:255',
-            'customerNIT' => 'required|string|max:255',
-            'customerState' => 'required|string|max:255',
-        ]);
+{
+    // Validar los datos del formulario
+    $validatedData = $request->validate([
+        'customerName' => 'required|string|max:255',
+        'customerNIT' => 'required|string|max:255',
+        'customerState' => 'required|string|max:255',
+    ]);
 
-        // Crear un nuevo cliente
-        $cliente = new Cliente();
-        $cliente->nombre = $request->input('customerName');
-        $cliente->nit = $request->input('customerNIT');
-        $cliente->estado = $request->input('customerState');
-        // Puedes agregar más campos según sea necesario
+    // Crear un nuevo cliente
+    $cliente = new Cliente();
+    $cliente->nombre = $request->input('customerName');
+    $cliente->nit = $request->input('customerNIT');
+    $cliente->estado = $request->input('customerState');
+    // Puedes agregar más campos según sea necesario
 
-        // Guardar el cliente en la base de datos
-        $cliente->save();
+    // Guardar el cliente en la base de datos
+    $cliente->save();
 
-        // Redireccionar a alguna página después de guardar el cliente
-        return redirect()->route('initiative.index')->with('success', 'Cliente registrado exitosamente');
-    }
+    // Obtener el ID del cliente recién creado
+    $clienteId = $cliente->id;
+
+    // Redireccionar a alguna página después de guardar el cliente
+    return redirect()->route('initiative.index')->with('success', 'Cliente registrado exitosamente. ID del cliente: ' . $clienteId);
+}
+
     public function edit(Request $request)
     {
         // //

@@ -51,7 +51,7 @@
                         </th>
                         <td>
                             <div class="input-group">
-                                <textarea name="customerNIT" id="customerNIT" class="form-control" placeholder="NIT del Cliente" maxlength="200" rows="2" required>{{ old('customerNIT') }}</textarea>
+                                <input type="text" name="customerNIT" id="customerNIT" class="form-control" placeholder="NIT del Cliente" maxlength="12" required>
                                 <div class="input-group-append">
                                     <span class="input-group-text" data-toggle="popover" data-html="true" data-placement="left" title="Ayuda" data-content="Indique el NIT del cliente">
                                         <i class="fas fa-question-circle"></i>
@@ -76,10 +76,16 @@
                 </table>
             </div>
         </div>
+        <div class="card-footer">
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        <i class="fa fa-save"></i> Guardar
+                    </button>
+                </div>
+            </div>
     </form>
 
     <script>
-        // Obtener el campo de entrada por su ID
+        // Obtener el campo de entrada del nombre del cliente por su ID
         var customerNameInput = document.getElementById('customerName');
 
         // Agregar un evento de escucha para el evento 'input'
@@ -87,5 +93,26 @@
             // Convertir el valor del campo a mayúsculas y actualizar el valor del campo
             this.value = this.value.toUpperCase();
         });
+
+        // Obtener el campo de entrada del NIT por su ID
+        var customerNITInput = document.getElementById('customerNIT');
+
+        // Agregar un evento de escucha para el evento 'input'
+        customerNITInput.addEventListener('input', function() {
+            // Obtener el valor del campo de entrada
+            var value = this.value.trim();
+
+            // Eliminar cualquier carácter que no sea un dígito
+            value = value.replace(/\D/g, '');
+
+            // Añadir guion antes del último dígito si hay 10 dígitos
+            if (value.length === 10) {
+                value = value.slice(0, -1) + '-' + value.slice(-1);
+            }
+
+            // Actualizar el valor del campo de entrada
+            this.value = value;
+        });
     </script>
 @stop
+

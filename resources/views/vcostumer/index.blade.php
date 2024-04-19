@@ -8,7 +8,7 @@
          <div class="card card-default">
             <div class="card-body">
                 @can('devState-create')
-                    <a href="{{ route('vcenters.create') }}" class="btn btn-sm btn-danger">
+                    <a href="{{ route('vcostumer.create') }}" class="btn btn-sm btn-danger">
                         <span class="fa fa-plus fa-1x"></span>&nbsp Nuevo registro
                      </a>
                 @endcan
