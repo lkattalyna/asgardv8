@@ -1,7 +1,6 @@
 @extends('adminlte::page')
 @section('content_header')
-    <h1> Formulario de registro de automatizaciones</h1>
-    <hr>
+    <h1> Formulario de registro de automatizaciones</h1><hr>
 @stop
 @section('plugins.Select2', true)
 @section('plugins.Date-Picker', true)

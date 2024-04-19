@@ -1,5 +1,5 @@
 <?php
-//holaaaaa//
+
 namespace App\Http\Controllers;
 
 use App\Models\Initiative;

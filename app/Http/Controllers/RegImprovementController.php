@@ -99,6 +99,7 @@ class RegImprovementController extends Controller
             'end' => 'required|date',
         ]);
 
+        
         $improvement = RegImprovement::create([
             'asgard_view' => $request->input('asgard'),
             'description' => $request->input('description'),

@@ -15,7 +15,6 @@ class CreateInitiativesTable extends Migration
     {
         Schema::create('initiatives', function (Blueprint $table) {
             $table->increments('id');
-            //$table->string('initiativeID');
             $table->string('initiative_name');
             $table->string('segment_name');
             $table->string('tower');
