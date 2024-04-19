@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\InitiativeController;
-use App\Http\Controllers\VcostumerController;
+use App\Http\Controllers\CostumerController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
@@ -1007,10 +1007,14 @@ Route::group(['middleware' => ['auth']], function() {
 
 
     //VCostumer clientes
-    Route::resource('vcostumer', 'VcostumerController')->except('show');
-    Route::get('vcostumer/index', 'VcostumerController@index')->name('vcostumer.index');
-    Route::get('vcostumer/create', 'VcostumerController@create')->name('vcostumer.create');
-    Route::post('vcostumer', 'VcostumerController@store')->name('vcostumer.store');
+    Route::resource('customer', 'CustomerController')->except('show');
+    Route::get('customer/index', 'CustomerController@index')->name('customer.index');
+    Route::post('customer/create', 'CustomerController@store')->name('customer.create');
+    Route::get('customer/edit/{id}', 'CustomerController@edit')->name('customer.edit');
+    //Route::get('customer/{id}/edit', 'CustomerController@edit')->name('customer.edit');
+    //Route::put('customer/{id}', 'CustomerController@update')->name('customer.update');
+
+    Route::delete('/customer/{id}', 'CustomerController@destroy')->name('customer.destroy');
 
 });
 

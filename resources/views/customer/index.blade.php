@@ -1,72 +1,88 @@
 @extends('adminlte::page')
 @section('content_header')
-    <h1> Consulta de segregaciones creadas</h1><hr>
+<h1> Consulta de segregaciones creadas</h1>
+<hr>
 @stop
 @section('plugins.Datatables', true)
 @section('content')
-    @can('devState-list')
-         <div class="card card-default">
-            <div class="card-body">
-                @can('devState-create')
-                    <a href="{{ route('vcostumer.create') }}" class="btn btn-sm btn-danger">
-                        <span class="fa fa-plus fa-1x"></span>&nbsp Nuevo registro
-                     </a>
-                @endcan
-                <div class="float-sm-right" id="btn_table"></div>
-            </div>
-        </div>
-        
-                    @include('layouts.messages')
-        <div class="card">
-            <!-- /.card-header -->
-            <div class="card-header">
-                <h3 class="card-title">Segregación Clientes</h3>
-            </div>
-            <!-- /.card-body -->
-            <div class="card-body">
-                <!-- /.table-responsive -->
-                <table id="example1" class="table table-striped table-bordered" >
-                    <thead>
-                        <tr>
-                            <th>Costumer id</th>
-                            <th>Nombre de Cliente</th>
-                            <th>NIT</th>
-                            <th>Estado</th>
-                            <th>Fecha de creación</th>
-                            <th>Fecha de modificación</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                            <tr>
-                               
-                              
-                                <td class="center">
-                                    
-                                        <a href="" title="Editar">
-                                            <button class="btn btn-sm btn-default">
-                                                <i class="fa fa-edit" style="color: #0d6aad"></i>
-                                            </button>
-                                        </a>
-                                 
-                                   
-                                        <a href="#" title="Eliminar" data-href=""
-                                            data-toggle="modal" data-target="#confirm-delete">
-                                            <button class="btn btn-sm btn-default">
-                                                <i class="fa fa-trash" style="color: #c51f1a;"></i>
-                                            </button>
-                                        </a>
-                                  
-                                </td>
-                            </tr>
-                    </tbody>
-                </table>
-            </div>
-            <!-- /.card-body -->
-        </div>
-        <!-- /.card -->
-        @include('layouts.del_modal')
+@can('devState-list')
+<div class="card card-default">
+    <div class="card-body">
+        @can('devState-create')
+        <a href="{{ route('customer.create') }}" class="btn btn-sm btn-danger">
+            <span class="fa fa-plus fa-1x"></span>&nbsp Nuevo registro
+        </a>
+        @endcan
+        <div class="float-sm-right" id="btn_table"></div>
+    </div>
+</div>
+
+@include('layouts.messages')
+<div class="card">
+    <!-- /.card-header -->
+    <div class="card-header">
+        <h3 class="card-title">Segregación Clientes</h3>
+    </div>
+    <!-- /.card-body -->
+    <div class="card-body">
+        <!-- /.table-responsive -->
+        <table id="example1" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Customer id</th>
+                    <th>Nombre de Cliente</th>
+                    <th>NIT</th>
+                    <th>Estado</th>
+                    <th>Fecha de creación</th>
+                    <th>Fecha de modificación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($Customer as $customer)
+                <tr>
+                    <td>{{ $customer->customerID }}</td>
+                    <td>{{ $customer->customerName }}</td>
+                    <td>{{ $customer->customerNIT }}</td>
+                    @if ($customer->customerState == 0)
+                    <td>No Activo</td>
+                    @else
+                    <td>Activo</td>
+                    @endif
+                    <td>{{ $customer->customerCreatedAt }}</td>
+                    <td>{{ $customer->customerUpdatedAt }}</td>
+
+                    <td class="center">
+
+                        <a href="" title="Segregar Cliente">
+                            <button class="btn btn-sm btn-default">
+                                <i class="fa fa-tasks" style="color: #0d6aad"></i>
+                            </button>
+                        </a>
+
+                        <a href="{{ url('/customer/edit/' . $customer->id) }}" title="Editar">
+                            <button class="btn btn-sm btn-default">
+                                <i class="fa fa-edit" style="color: #0d6aad"></i>
+                            </button>
+                        </a>
+
+
+                        <a href="#" title="Eliminar" data-href="{{ route('customer.destroy', $customer->customerID) }}" data-toggle="modal" data-target="#confirm-delete">
+                            <button class="btn btn-sm btn-default">
+                                <i class="fa fa-trash" style="color: #c51f1a;"></i>
+                            </button>
+                        </a>
+
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!-- /.card -->
+@include('layouts.del_modal')
 @else
 @include('layouts.forbidden_1')
 @endcan

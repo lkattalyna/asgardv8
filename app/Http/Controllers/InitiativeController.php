@@ -32,7 +32,7 @@ class InitiativeController extends Controller
 
 
         // Obtener los datos guardados en 'initiatives'
-        $initiativeData = Initiative::first(); // Suponiendo que solo hay un registro por ahoray
+        $initiativeData = Initiative::first(); // Suponiendo que solo hay un registro por ahora
         Log::info('estoy en initiative.index');
         $datos['Initiative'] = Initiative::get();
 

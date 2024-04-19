@@ -12,7 +12,7 @@
     <div class="card card-default">
         <div class="card-body">
             <div class="float-sm-right">
-                <a class="btn btn-sm btn-danger" href="{{ route('vcostumer.index') }}">
+                <a class="btn btn-sm btn-danger" href="{{ route('customer.index') }}">
                     <i class="fa fa-reply"></i> Volver
                 </a>
             </div>
@@ -31,7 +31,7 @@
                     <!--nombre del cliente-->
                     <tr>
                         <th>
-                            <label for="initiativeName" class="text-center">Nombre del Cliente</label>
+                            <label for="customerID" class="text-center">Nombre del Cliente</label>
                         </th>
                         <td>
                             <div class="input-group">
@@ -47,7 +47,7 @@
                     <!--NIT del cliente-->
                     <tr>
                         <th>
-                            <label for="initiativeName" class="text-center">Nit del Cliente</label>
+                            <label for="customerName" class="text-center">Nit del Cliente</label>
                         </th>
                         <td>
                             <div class="input-group">
@@ -63,13 +63,13 @@
                     <!--Estado del cliente-->
                     <tr>
                         <th>
-                            <label for="customerState" class="text-md-right">Estado del Cliente</label>
+                            <label for="customerNIT" class="text-md-right">Estado del Cliente</label>
                         </th>
                         <td>
                             <select class="form-control" name="customerState" id="customerState" style="width: 100%;" required>
                                 <option></option>
-                                <option value="Acción">Registrado</option>
-                                <option value="Consulta">No Registrado</option>
+                                <option value="1">Activo</option>
+                                <option value="0">No Activo</option>
                             </select>
                         </td>
                     </tr>
