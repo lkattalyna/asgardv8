@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Formulario de Registro de Clientes</h1>
+    <h1>Formulario de Edición de Cliente</h1>
     <hr>
 @stop
 
@@ -20,8 +20,9 @@
     </div>
     @include('layouts.formError')
 
-    <form action="{{ route('customer.update', $customer->id) }}" method="post" enctype="multipart/form-data">
-        {!! csrf_field() !!}
+    <form method="POST" action="{{ route('customer.update', $customer->customerID) }}"> <!-- Cambiado de $customer->id a $customer->customerID -->
+        @csrf
+        @method('PUT')
         <div class="card card-default">
             <div class="card-header with-border">
                 <p>Este formulario permitirá editar un nuevo cliente</p>
@@ -35,7 +36,7 @@
                         </th>
                         <td>
                             <div class="input-group">
-                                <textarea name="customerName" id="customerName" class="form-control" placeholder="Nombre del Cliente" maxlength="200" rows="2" required>{{ old('customerName') }}</textarea>
+                                <textarea name="customerName" id="customerName" class="form-control" placeholder="Nombre del Cliente" maxlength="200" rows="2" required>{{ old('customerName', $customer->customerName) }}</textarea>
                                 <div class="input-group-append">
                                     <span class="input-group-text" data-toggle="popover" data-html="true" data-placement="left" title="Ayuda" data-content="Indique el nombre del cliente">
                                         <i class="fas fa-question-circle"></i>
@@ -51,7 +52,7 @@
                         </th>
                         <td>
                             <div class="input-group">
-                                <input type="text" name="customerNIT" id="customerNIT" class="form-control" placeholder="NIT del Cliente" maxlength="12" required>
+                                <input type="text" name="customerNIT" id="customerNIT" class="form-control" placeholder="NIT del Cliente" maxlength="12" value="{{ old('customerNIT', $customer->customerNIT) }}" required>
                                 <div class="input-group-append">
                                     <span class="input-group-text" data-toggle="popover" data-html="true" data-placement="left" title="Ayuda" data-content="Indique el NIT del cliente">
                                         <i class="fas fa-question-circle"></i>
@@ -67,9 +68,8 @@
                         </th>
                         <td>
                             <select class="form-control" name="customerState" id="customerState" style="width: 100%;" required>
-                                <option></option>
-                                <option value="1">Activo</option>
-                                <option value="0">No Activo</option>
+                                <option value="1" {{ old('customerState', $customer->customerState) == 1 ? 'selected' : '' }}>Activo</option>
+                                <option value="0" {{ old('customerState', $customer->customerState) == 0 ? 'selected' : '' }}>No Activo</option>
                             </select>
                         </td>
                     </tr>
@@ -77,11 +77,10 @@
             </div>
         </div>
         <div class="card-footer">
-                    <button type="submit" class="btn btn-sm btn-danger">
-                        <i class="fa fa-save"></i> Guardar
-                    </button>
-                </div>
-            </div>
+            <button type="submit" class="btn btn-sm btn-danger">
+                <i class="fa fa-save"></i> Guardar
+            </button>
+        </div>
     </form>
 
     <script>
@@ -115,4 +114,3 @@
         });
     </script>
 @stop
-

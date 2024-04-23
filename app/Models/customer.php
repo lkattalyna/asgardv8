@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-
-class customer extends Model
+class Customer extends Model
 {
     protected $table = 'central.customer';
-    const CREATED_AT = 'customerCreatedAt'; // Nombre de la columna de creación
+    const CREATED_AT = 'customerCreatedAt';
     const UPDATED_AT = 'customerUpdatedAt';
-    //Se instancia la conexion de la base de datos y la tabla objetivo
+
+    protected $primaryKey = 'customerID';
+
     protected $fillable = [
         'customerID',
         'customerName',
@@ -20,5 +20,5 @@ class customer extends Model
         'customerCreatedAt',
         'customerUpdatedAt'
     ];
-
 }
+

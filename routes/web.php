@@ -1010,7 +1010,12 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('customer', 'CustomerController')->except('show');
     Route::get('customer/index', 'CustomerController@index')->name('customer.index');
     Route::post('customer/create', 'CustomerController@store')->name('customer.create');
-    Route::get('customer/edit/{id}', 'CustomerController@edit')->name('customer.edit');
+    Route::get('/customer/{customerID}/edit', 'CustomerController@edit')->name('customer.edit');
+
+
+
+
+
     //Route::get('customer/{id}/edit', 'CustomerController@edit')->name('customer.edit');
     //Route::put('customer/{id}', 'CustomerController@update')->name('customer.update');
 
