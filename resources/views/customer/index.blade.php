@@ -21,7 +21,7 @@
         </div>
 
         @include('layouts.messages')
-        
+
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Segregación Clientes</h3>
@@ -36,6 +36,7 @@
                             <th>Estado</th>
                             <th>Fecha de creación</th>
                             <th>Fecha de modificación</th>
+                            <th>Segregación</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -52,32 +53,34 @@
                                 @endif
                                 <td>{{ $customer->customerCreatedAt }}</td>
                                 <td>{{ $customer->customerUpdatedAt }}</td>
+                                <td>
+                                    <a href="" title="VCenter">
+                                        <button class="btn btn-sm btn-default">
+                                            <i class="fa fa-tasks" style="color: #0d6aad"></i>
+                                        </button>
+                                    </a>
+                                </td>
                                 <td class="center">
-                                <a href="" title="Segregar Cliente">
-                            <button class="btn btn-sm btn-default">
-                                <i class="fa fa-tasks" style="color: #0d6aad"></i>
-                            </button>
-                        </a>
                                     <a href="{{ route('customer.edit', $customer->customerID) }}" class="btn btn-sm btn-default" title="Editar">
-                                        <i class="fa fa-edit" style="color: #0d6aad"></i></a>
-
-                                        <a href="#" title="Eliminar" data-href="{{ route('customer.destroy', $customer->customerID) }}" data-toggle="modal" data-target="#confirm-delete">
-                                            <button class="btn btn-sm btn-default">
-                                                <i class="fa fa-trash" style="color: #c51f1a;"></i>
-                                            </button>
-                                        </a>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                @include('layouts.del_modal')
-                @else
-                @include('layouts.forbidden_1')
-                @endcan
-                @stop
+                                        <i class="fa fa-edit" style="color: #0d6aad"></i>
+                                    </a>
+                                    <a href="#" title="Eliminar" data-href="{{ route('customer.destroy', $customer->customerID) }}" data-toggle="modal" data-target="#confirm-delete">
+                                        <button class="btn btn-sm btn-default">
+                                            <i class="fa fa-trash" style="color: #c51f1a;"></i>
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @include('layouts.del_modal')
+    @else
+        @include('layouts.forbidden_1')
+    @endcan
+@stop
 
 @section('js')
     <script>
