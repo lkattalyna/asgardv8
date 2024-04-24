@@ -71,6 +71,12 @@ class CustomerController extends Controller
         $customer = Customer::where('customerID', $customerID)->firstOrFail();
         return view('customer.edit', compact('customer'));
     }
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     
     public function update(Request $request, $customerID)
     {
@@ -85,8 +91,12 @@ class CustomerController extends Controller
         $customer->customerNIT = $request->customerNIT;
         $customer->customerState = $request->customerState;
         $customer->save();
+
+        // Obtener el ID del cliente recién creado
+        $customerID = $customer->customerID;
     
-        return redirect()->route('customer.index')->with('success', 'Cliente actualizado correctamente.');
+        return redirect()->route('customer.index')->with(
+            'success', 'Cliente con id ' . $customerID . ' actualizado correctamente por '  . auth()->user()->name);
     }
 
     /**
@@ -102,7 +112,19 @@ class CustomerController extends Controller
 
         return redirect()->back()->with(
             'success',
-            'Registro con id ' . $id . ' ha sido eliminada por ' . auth()->user()->name . ' con éxito.'
+            'Registro con id ' . $id . ' ha sido eliminado por ' . auth()->user()->name . ' con éxito.'
         );
     }
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    
+     public function show(Request $request, $customerID)
+     {
+        $customer = Customer::where('customerID', $customerID)->firstOrFail();
+        return view('customer.show', compact('customer'));
+     }
 }

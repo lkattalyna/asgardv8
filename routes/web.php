@@ -997,7 +997,6 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('initiative/index', 'InitiativeController@index')->name('initiative.index');
     Route::post('initiative/create', 'InitiativeController@store')->name('initiative.create');
     Route::get('initiative/edit/{id}', 'InitiativeController@edit')->name('initiative.edit');
-    //Route::patch('initiative/edit/{id}', 'InitiativeController@update')->name('initiative.update');
     Route::get('initiative/show/{id}', 'InitiativeController@show')->name('initiative.show');
     Route::delete('/initiative/{id}', 'InitiativeController@destroy')->name('initiative.destroy');
     Route::get('/initiative/file/{attachments}', 'InitiativeController@file')->name('initiative.file');
@@ -1011,14 +1010,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('customer/index', 'CustomerController@index')->name('customer.index');
     Route::post('customer/create', 'CustomerController@store')->name('customer.create');
     Route::get('/customer/{customerID}/edit', 'CustomerController@edit')->name('customer.edit');
-
-
-
-
-
-    //Route::get('customer/{id}/edit', 'CustomerController@edit')->name('customer.edit');
-    //Route::put('customer/{id}', 'CustomerController@update')->name('customer.update');
-
+    Route::get('customer/show/{customerID}', 'CustomerController@show')->name('customer.show');
     Route::delete('/customer/{id}', 'CustomerController@destroy')->name('customer.destroy');
 
 });
