@@ -31,23 +31,39 @@
             <p>Este formulario permitirá agregar los vcenter asociados al cliente</p>
         </div>
         <div class="card-body">
-            <table>
-                <div class="card card-default">
-                    <div class="card-header with-border" style="background: #dfe1e4;">
-                        <h3 class="card-title">Vcenter</h3>
-                    </div>
-                    <input type="hidden" id="memory" name="memory" value="0">
+
+            <div class="card card-default">
+                <div class="card-header with-border" style="background: #dfe1e4;">
+                    <h3 class="card-title">Vcenter</h3>
                 </div>
+                <input type="hidden" id="memory" name="memory" value="0">
+            </div>
+
+            <td>
+                <label for="vcenterAgregado">{{_('vcenter Agregados') }}</label>
+            </td>
+            </tr>
+            <td>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-sm btn-danger">
                         <i class="fa fa-save"></i> Guardar
                     </button>
                 </div>
+            </td>
+
         </div>
+        </table>
 </form>
-</table>
+
+
 <table id="example1" class="table table-striped table-bordered">
     <thead>
+        <div class="card card-default">
+            <div class="card-header with-border" style="background: #dfe1e4;">
+                <h3 class="card-title">Listado de Vcenter</h3>
+            </div>
+            <input type="hidden" id="memory" name="memory" value="0">
+        </div>
         <tr>
             <th>ID</th>
             <th>Alias</th>
@@ -73,8 +89,7 @@
             @endif
             <td>{{ $vcenter->rolesID}}</td>
             <td>{{ $vcenter->vcenterVersion }}</td>
-            <td>{{ $vcenter->Acciones }}</td>
-            <td>
+            <td>{{ $vcenter->Acciones }}
                 <a href="{{ route('customer.show', 1) }}" title="Agregar vcenter">
                     <button class="btn btn-sm btn-default">
                         <i class="fa fa-plus" style="color: red"></i>
