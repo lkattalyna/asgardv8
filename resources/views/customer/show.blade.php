@@ -49,31 +49,33 @@
 <table id="example1" class="table table-striped table-bordered">
     <thead>
         <tr>
-            <th>vcenterAlias</th>
-            <th>fk_segmentID</th>
-            <th>vcenterIp</th>
-            <th>vcenterStatus</th>
-            <th>rolesID</th>
-            <th>vcenterVersion</th>
+            <th>ID</th>
+            <th>Alias</th>
+            <th>Segment</th>
+            <th>IP</th>
+            <th>Estado</th>
+            <th>Rol</th>
+            <th>Version</th>
             <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
         @foreach ($Vcenter as $vcenter)
         <tr>
+            <td>{{ $vcenter->vcenterID}}</td>
             <td>{{ $vcenter->vcenterAlias}}</td>
-            <td>{{ $vcenter->fk_segmentID }}</td>
+            <td>{{ $vcenter->segment->segmentName }}</td>
             <td>{{ $vcenter->vcenterIp }}</td>
-
             @if ($vcenter->customerState == 0)
             <td>No Activo</td>
             @else
             <td>Activo</td>
             @endif
-            <td>{{ $vcenter->customerCreatedAt }}</td>
-            <td>{{ $vcenter->customerUpdatedAt }}</td>
+            <td>{{ $vcenter->rolesID}}</td>
+            <td>{{ $vcenter->vcenterVersion }}</td>
+            <td>{{ $vcenter->Acciones }}</td>
             <td>
-                <a href="{{ route('customer.show', 1) }}" title="Segregar por vcenter">
+                <a href="{{ route('customer.show', 1) }}" title="Agregar vcenter">
                     <button class="btn btn-sm btn-default">
                         <i class="fa fa-plus" style="color: red"></i>
                     </button>

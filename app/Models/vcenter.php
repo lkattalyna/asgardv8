@@ -12,6 +12,7 @@ class vcenter extends Model
    // protected $primaryKey = 'customerID';
 
     protected $fillable = [
+        'vcenterID',
         'vcenterAlias',
         'fk_segmentID',
         'vcenterIp',

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Customer; // Importante: Asegúrate de usar el modelo correcto aquí
 use App\Models\vcenter;
+use App\Segment;
 
 
 
@@ -120,14 +121,20 @@ class CustomerController extends Controller
     }
     /**
      * Show the form for editing the specified resource.
-     *
+     *0
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     
      public function show(Request $request, $customerID)
      {
-        $Vcenter = vcenter::get();
+        $Vcenter= vcenter::get();
+        
+        foreach ($Vcenter as $vcenter) {
+            $segment = Segment::find($vcenter->fk_segmentID);
+            $vcenter->segment = $segment;
+        }
+        
         Log::info($Vcenter);
         return view('customer.show', compact('Vcenter'));
         

@@ -1013,5 +1013,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('customer/show/{customerID}', 'CustomerController@show')->name('customer.show');
     Route::delete('/customer/{id}', 'CustomerController@destroy')->name('customer.destroy');
 
-});
 
+    //link boton add 
+    //Route::get('virtualizations/runDiagnostic/{id}/{vcenter}', 'VirtualizationController@runDiag')->name('virtualization.runDiag');
+});
