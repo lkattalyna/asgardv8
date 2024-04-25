@@ -20,7 +20,7 @@
 </div>
 @include('layouts.formError')
 
-<form method="POST" action="{{ route('customer.show', $customer->customerID) }}">
+<form method="POST" action="{{ route('customer.show', 1) }}">
     <!-- Cambiado de $customer->id a $customer->customerID -->
     @csrf
     @method('PUT')
@@ -46,43 +46,43 @@
         </div>
 </form>
 </table>
-<div class="card card-default">
-    <div class="card-header with-border" style="background: #dfe1e4;">
-        <h3 class="card-title">Selección de Vcenter asociado</h3>
-    </div>
-    <div class="card-body">
-        <table class="table table-bordered table-hover">
-            <tr>
-                <td>
-                    <label for="service">{{ __('Vcenter') }}</label>
-                </td>
-                <td>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-desktop"></i></span>
-                        </div>
-                        <input type="text" name="service" id="service" class="form-control input-md"
-                            value="{{ old('service') }}" maxlength="30" pattern="^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-].{1,}"
-                            placeholder="Seleccione el vcenter" required
-                            title="Seleccione el vcenter que esté asociado a la cuenta">
+<table id="example1" class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>vcenterAlias</th>
+            <th>fk_segmentID</th>
+            <th>vcenterIp</th>
+            <th>vcenterStatus</th>
+            <th>rolesID</th>
+            <th>vcenterVersion</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($Vcenter as $vcenter)
+        <tr>
+            <td>{{ $vcenter->vcenterAlias}}</td>
+            <td>{{ $vcenter->fk_segmentID }}</td>
+            <td>{{ $vcenter->vcenterIp }}</td>
 
-                        <button type="button" class="btn btn-sm btn-danger" id="ejecutar">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
-</div>
-<div class="card card-default">
-    <div class="card-header with-border" style="background: #dfe1e4;">
-        <h3 class="card-title">Resultado de la búsqueda</h3>
-    </div>
-    <div class="card-body" id="contenido">
-    </div>
-</div>
-</form>
+            @if ($vcenter->customerState == 0)
+            <td>No Activo</td>
+            @else
+            <td>Activo</td>
+            @endif
+            <td>{{ $vcenter->customerCreatedAt }}</td>
+            <td>{{ $vcenter->customerUpdatedAt }}</td>
+            <td>
+                <a href="{{ route('customer.show', 1) }}" title="Segregar por vcenter">
+                    <button class="btn btn-sm btn-default">
+                        <i class="fa fa-plus" style="color: red"></i>
+                    </button>
+                </a>
+            </td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
 <script>
 // Obtener el campo de entrada del nombre del cliente por su ID
 var customerNameInput = document.getElementById('customerName');

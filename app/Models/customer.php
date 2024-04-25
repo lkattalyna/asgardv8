@@ -21,4 +21,3 @@ class Customer extends Model
         'customerUpdatedAt'
     ];
 }
-

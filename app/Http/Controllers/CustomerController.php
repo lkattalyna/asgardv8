@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Customer; // Importante: Asegúrate de usar el modelo correcto aquí
+use App\Models\vcenter;
+
+
 
 class CustomerController extends Controller
 {
@@ -124,7 +127,9 @@ class CustomerController extends Controller
     
      public function show(Request $request, $customerID)
      {
-        $customer = Customer::where('customerID', $customerID)->firstOrFail();
-        return view('customer.show', compact('customer'));
+        $Vcenter = vcenter::get();
+        Log::info($Vcenter);
+        return view('customer.show', compact('Vcenter'));
+        
      }
 }

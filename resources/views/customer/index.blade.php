@@ -54,7 +54,7 @@
                     <td>{{ $customer->customerCreatedAt }}</td>
                     <td>{{ $customer->customerUpdatedAt }}</td>
                     <td>
-                        <a href="{{ route('customer.show', $customer->customerID) }}" title="Segregar Cliente">
+                        <a href="{{ route('customer.show', $customer->customerID) }}" title="Segregar por vcenter">
                             <button class="btn btn-sm btn-default">
                                 <i class="fa fa-tasks" style="color: #0d6aad"></i>
                             </button>
