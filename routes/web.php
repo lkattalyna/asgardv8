@@ -22,25 +22,26 @@ use Illuminate\Support\Facades\Storage;
     return view('auth.login');
 });
 Auth::routes(['register' => false, 'reset' => false]); */
+
 Route::get('/', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('login', 'Auth\LoginController@login');
 Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 // Registration Routes...
 
 Route::get('file_p/{folder}/{file}', function ($folder, $file) {
-        $folder = explode('-',$folder);
-        $url = "";
-        foreach($folder as $str){
-            if ($str === end($folder)) {
-                $url .= $str;
-            }else{
-                $url .= $str.'/';
-            }
+    $folder = explode('-', $folder);
+    $url = "";
+    foreach ($folder as $str) {
+        if ($str === end($folder)) {
+            $url .= $str;
+        } else {
+            $url .= $str . '/';
         }
-        return Storage::disk('fileserver')->get("$url/$file");
-    })->name('files_p.get');
+    }
+    return Storage::disk('fileserver')->get("$url/$file");
+})->name('files_p.get');
 
-Route::group(['middleware' => ['auth']], function() {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/homePremium', 'HomeController@indexPremium')->name('home.premium');
     // Chatbot
@@ -49,11 +50,11 @@ Route::group(['middleware' => ['auth']], function() {
         return view('homeTest');
     });
     // Rutas de menus
-    Route::name('admin.')->prefix('admin')->group( function () {
-        Route::get('menus/createWithAuto','Admin\MenuController@createWithAutomatizacion')->name('menus.createWithAuto');
-        Route::post('menus/createWithAuto','Admin\MenuController@storeWithAutomatizacion')->name('menus.createWithAutoPOST');
-        Route::post('menus/createWithSubMenus/{idPadre}','Admin\MenuController@createWithSubMenus')->name('menus.createWithSubMenusPOST');
-        Route::put('menus/createWithSubMenus','Admin\MenuController@storeWithSubMenus')->name('menus.createWithSubMenusPUT');
+    Route::name('admin.')->prefix('admin')->group(function () {
+        Route::get('menus/createWithAuto', 'Admin\MenuController@createWithAutomatizacion')->name('menus.createWithAuto');
+        Route::post('menus/createWithAuto', 'Admin\MenuController@storeWithAutomatizacion')->name('menus.createWithAutoPOST');
+        Route::post('menus/createWithSubMenus/{idPadre}', 'Admin\MenuController@createWithSubMenus')->name('menus.createWithSubMenusPOST');
+        Route::put('menus/createWithSubMenus', 'Admin\MenuController@storeWithSubMenus')->name('menus.createWithSubMenusPUT');
         Route::post('menus/especializar', 'Admin\MenuController@especializarMenu')->name('menu.especializar');
         Route::resource('menus', 'Admin\MenuController');
     });
@@ -65,13 +66,13 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('permissions', 'PermissionController');
     Route::get('permissions/{permission}/revoke', 'PermissionController@revoke')->name('permissions.revoke');
     // Rutas usuarios
-    Route::resource('users','CrudController');
+    Route::resource('users', 'CrudController');
     //Rutas para OS Groups
     Route::resource('osGroups', 'OsGroupController')->except('show');
     //Rutas para Inventarios
-    Route::resource('inventories', 'InventoryController')->only('index','create');
+    Route::resource('inventories', 'InventoryController')->only('index', 'create');
     //Rutas para Templates
-    Route::resource('awxTemplates', 'AwxTemplateController')->only('index','create','show');
+    Route::resource('awxTemplates', 'AwxTemplateController')->only('index', 'create', 'show');
     //Rutas para Login Logs
     Route::get('loginLogs', 'LoginLogController@index')->name('loginLogs.index');
     Route::post('loginLogs', 'LoginLogController@showLogs')->name('loginLogs.showLogs');
@@ -83,28 +84,28 @@ Route::group(['middleware' => ['auth']], function() {
     //Manejo de archivos
     //Route::get('file', 'HomeController@files')->name('files.index');
     Route::get('file/{folder}/{file}', function ($folder, $file) {
-        $folder = explode('-',$folder);
+        $folder = explode('-', $folder);
         $url = "";
-        foreach($folder as $str){
+        foreach ($folder as $str) {
             if ($str === end($folder)) {
                 $url .= $str;
-            }else{
-                $url .= $str.'/';
+            } else {
+                $url .= $str . '/';
             }
         }
         return Storage::disk('fileserver')->get("$url/$file");
     })->name('files.get');
     //Dev Task
 
-    Route::post('global/{automatizacion}','VistasReutilizablesController@peticionAuxilar')->name('global.get');
-    Route::get('premium/{cliente}/{automatizacion}','VistasReutilizablesController@index')->name('premium.index');
-    Route::post('premium/{cliente}/{automatizacion}','VistasReutilizablesController@store')->name('premium.store');
+    Route::post('global/{automatizacion}', 'VistasReutilizablesController@peticionAuxilar')->name('global.get');
+    Route::get('premium/{cliente}/{automatizacion}', 'VistasReutilizablesController@index')->name('premium.index');
+    Route::post('premium/{cliente}/{automatizacion}', 'VistasReutilizablesController@store')->name('premium.store');
 
     Route::resource('dev/devTasks', 'DevTaskController')->except('show');
     Route::resource('dev/devStates', 'DevStateController')->except('show');
     Route::resource('vcenters', 'VcenterController')->except('show');
     Route::get('dev/devRequests/admin', 'DevRequestController@indexAdmin')->name('devRequests.indexAdmin');
-    Route::resource('dev/devRequests', 'DevRequestController')->except('edit','destroy');
+    Route::resource('dev/devRequests', 'DevRequestController')->except('edit', 'destroy');
     Route::get('dev/devRequests/{devRequest}/devRequestFields', 'DevRequestFieldController@index')->name('devRequestFields.index');
     Route::post('dev/devRequests/{devRequest}/devRequestFields', 'DevRequestFieldController@store')->name('devRequestFields.store');
     Route::get('dev/devRequests/{devRequest}/devRequestFields/{devRequestField}', 'DevRequestFieldController@remove')->name('devRequestFields.remove');
@@ -199,8 +200,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('windows/checkCPUProcess', 'WindowsController@checkCPUProcessStore')->name('windows.checkCPUProcessStore');
     Route::get('windows/debuggingDisks', 'WindowsController@debuggingDisks')->name('windows.debuggingDisks');
     Route::post('windows/debuggingDisks', 'WindowsController@debuggingDisksStore')->name('windows.debuggingDisksStore');
-	//nuevo conectividad
-	Route::get('windows/connectivity', 'WindowsController@testConectividad')->name('windows.connectivity');
+    //nuevo conectividad
+    Route::get('windows/connectivity', 'WindowsController@testConectividad')->name('windows.connectivity');
     Route::post('windows/connectivity', 'WindowsController@testConectividadStore')->name('windows.connectivityStore');
 
     // GETSERVICES
@@ -208,15 +209,15 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('windows/serviceManagementV2', 'WindowsController@serviceManagementV2')->name('windows.servicesManagementV2');
     Route::post('windows/serviceManagementV2', 'WindowsController@serviceManagementStoreV2')->name('windows.serviceManagementV2');
     Route::post('windows/getServicesByHost', 'WindowsController@getServicesByHost')->name('windows.getServicesByHost');
-	//activarEnviarLogs
-    Route::get('windows/activacionEnvioLogs','WindowsController@activacionEnvioLogs')->name('windows.activacionEnvioLogs');
-    Route::post('windows/activacionEnvioLogs','WindowsController@activacionEnvioLogsStore')->name('windows.activacionEnvioLogsStore');
-    Route::post('windows/getListLogNameByHost','WindowsController@getListLogNameByHost')->name('windows.getListLogNameByHost');
+    //activarEnviarLogs
+    Route::get('windows/activacionEnvioLogs', 'WindowsController@activacionEnvioLogs')->name('windows.activacionEnvioLogs');
+    Route::post('windows/activacionEnvioLogs', 'WindowsController@activacionEnvioLogsStore')->name('windows.activacionEnvioLogsStore');
+    Route::post('windows/getListLogNameByHost', 'WindowsController@getListLogNameByHost')->name('windows.getListLogNameByHost');
 
-	// PRUEBAS
-	Route::get('pass/windows/getHosts/{inventario}/{grupo}/{method}', 'Pass\WindowsController@getHostsByGroup')->name('pass.windows.getHosts');
-	Route::get('pass/windows/services', 'Pass\WindowsController@servicesMejoras')->name('pass.windows.servicesMejoras');
-	Route::post('pass/windows/getServicesByHost', 'Pass\WindowsController@getServicesByHost')->name('pass.windows.getServicesByHost');
+    // PRUEBAS
+    Route::get('pass/windows/getHosts/{inventario}/{grupo}/{method}', 'Pass\WindowsController@getHostsByGroup')->name('pass.windows.getHosts');
+    Route::get('pass/windows/services', 'Pass\WindowsController@servicesMejoras')->name('pass.windows.servicesMejoras');
+    Route::post('pass/windows/getServicesByHost', 'Pass\WindowsController@getServicesByHost')->name('pass.windows.getServicesByHost');
     Route::post('pass/windows/services', 'Pass\WindowsController@storeServicesMejoras')->name('pass.windows.servicesMejorasStore');
 
     //Windows Personas y hogares
@@ -246,7 +247,7 @@ Route::group(['middleware' => ['auth']], function() {
     })->name('windowsPH.getCheckSOFile');
     Route::get('windowsPH/localUsersReport', 'WindowsPHController@localUsersReport')->name('windowsPH.localUsersReport');
     Route::post('windowsPH/localUsersReport', 'WindowsPHController@localUsersReportStore')->name('windowsPH.localUsersReportStore');
-	Route::get('windowsPH/connectivity', 'WindowsPHController@testConectividadPH')->name('windowsPH.connectivityPH');
+    Route::get('windowsPH/connectivity', 'WindowsPHController@testConectividadPH')->name('windowsPH.connectivityPH');
     Route::post('windowsPH/connectivity', 'WindowsPHController@testConectividadPHStore')->name('windowsPH.connectivityPHStore');
 
 
@@ -309,13 +310,13 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('unix/cleanFileSystem', 'UnixController@cleanFileSystemStore')->name('unix.cleanFileSystemStore');
     Route::get('unix/configLvm', 'UnixController@configLvm')->name('unix.configLvm');
     Route::post('unix/configLvm', 'UnixController@configLvmStore')->name('unix.configLvmStore');
-	//nuevo conectividad
-	Route::get('unix/connectivity', 'UnixController@testConectividadUnix')->name('unix.connectivityUnix');
+    //nuevo conectividad
+    Route::get('unix/connectivity', 'UnixController@testConectividadUnix')->name('unix.connectivityUnix');
     Route::post('unix/connectivity', 'UnixController@testConectividadUnixStore')->name('unix.connectivityUnixStore');
     //activarEnviarLogs
-    Route::get('unix/activacionEnvioLogs','UnixController@activacionEnvioLogs')->name('unix.activacionEnvioLogs');
-    Route::post('unix/activacionEnvioLogs','UnixController@activacionEnvioLogsStore')->name('unix.activacionEnvioLogsStore');
-    Route::post('unix/getListLogNameByHost','UnixController@getListLogNameByHost')->name('unix.getListLogNameByHost');
+    Route::get('unix/activacionEnvioLogs', 'UnixController@activacionEnvioLogs')->name('unix.activacionEnvioLogs');
+    Route::post('unix/activacionEnvioLogs', 'UnixController@activacionEnvioLogsStore')->name('unix.activacionEnvioLogsStore');
+    Route::post('unix/getListLogNameByHost', 'UnixController@getListLogNameByHost')->name('unix.getListLogNameByHost');
 
     //Unix Personas y hogares
     Route::get('unixPH/create', 'UnixPHController@create')->name('unixPH.create');
@@ -346,7 +347,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('unixPH/uploadDb', 'UnixPHController@uploadDbStore')->name('unixPH.uploadDbStore');
     Route::get('unixPH/validationNFSVenecia', 'UnixPHController@validationNFSVenecia')->name('unixPH.validationNFSVenecia');
     Route::post('unixPH/validationNFSVenecia', 'UnixPHController@validationNFSVeneciaStore')->name('unixPH.validationNFSVeneciaStore');
-	Route::get('unixPH/connectivity', 'UnixPHController@testConectividadUnixPH')->name('unixPH.connectivityUnixPH');
+    Route::get('unixPH/connectivity', 'UnixPHController@testConectividadUnixPH')->name('unixPH.connectivityUnixPH');
     Route::post('unixPH/connectivity', 'UnixPHController@testConectividadUnixPHStore')->name('unixPH.connectivityUnixPHStore');
     Route::get('unixPH/UpBashYaml', 'UnixPHController@UpBashYaml')->name('unixPH.UpBashYaml');
     Route::post('unixPH/UpBashYaml', 'UnixPHController@UpBashYamlStore')->name('unixPH.UpBashYamlStore');
@@ -403,11 +404,11 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('virtualizations/diagTest', 'VirtualizationController@diagTest')->name('virtualization.diagTest');
     Route::post('virtualizations/diagTest', 'VirtualizationController@diagTestStore')->name('virtualization.diagTestStore');
     //Cambio de Vlan
-	Route::get('virtualizations/vlanUpdate', 'VirtualizationController@vlanUpdate')->name('virtualization.vlanUpdate');
+    Route::get('virtualizations/vlanUpdate', 'VirtualizationController@vlanUpdate')->name('virtualization.vlanUpdate');
     Route::post('virtualizations/vlanUpdate', 'VirtualizationController@vlanUpdateStore')->name('virtualization.vlanUpdateStore');
     Route::post('virtualizations/vlanTable', 'VirtualizationController@vlanTablePost')->name('virtualization.vlanTablePost');
     Route::get('virtualizations/resourcesVlan/create', 'VirtualizationController@resourcesVlan')->name('virtualization.resourcesVlan');
-	//Aumento de Disk
+    //Aumento de Disk
     Route::get('virtualizations/resourcesDisk', 'VirtualizationController@resourcesDisk')->name('virtualization.resourcesDisk');
     Route::post('virtualizations/resourcesDiskStore', 'VirtualizationController@resourcesDiskStore')->name('virtualization.resourcesDiskStore');
     Route::post('virtualizations/resourcesDisk', 'VirtualizationController@DiskTablePost')->name('virtualization.DiskTablePost');
@@ -425,7 +426,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('convergence/hnasReport', 'ConvergenceController@hnasReport')->name('convergence.hnasReport');
     Route::post('convergence/hnasReport', 'ConvergenceController@hnasReportStore')->name('convergence.hnasReportStore');
     //Logs
-    Route::resource('executionLogs','ExecutionLogController');
+    Route::resource('executionLogs', 'ExecutionLogController');
     Route::get('executionLogs/getJobStatus/{job}/{executionLog}', 'ExecutionLogController@getJobStatus')->name('ExecutionLog.getJobStatus');
     Route::get('executionLogs/getJobResult/{job}/', 'ExecutionLogController@getJobResult')->name('ExecutionLog.getJobResult');
     Route::get('executionLogs/getJobResult/{job}/{server}', 'ExecutionLogController@getJobResult')->name('ExecutionLog.getJobResultServer');
@@ -469,8 +470,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('backup/apiJobs', 'BackupController@apiJobs')->name('backup.apiJobs');
 
     // backup Doc1 por demanda con modificación de rutas
-    Route::get('backup/backupDoc1ModificationOfRoutes','BackupController@backupDoc1ModificationOfRoutes')->name('backup.backupDoc1ModificationOfRoutes');
-    Route::post('backup/backupDoc1ModificationOfRoutes','BackupController@backupDoc1ModificationOfRoutesStore')->name('backup.backupDoc1ModificationOfRoutesStore');
+    Route::get('backup/backupDoc1ModificationOfRoutes', 'BackupController@backupDoc1ModificationOfRoutes')->name('backup.backupDoc1ModificationOfRoutes');
+    Route::post('backup/backupDoc1ModificationOfRoutes', 'BackupController@backupDoc1ModificationOfRoutesStore')->name('backup.backupDoc1ModificationOfRoutesStore');
 
     // politicas de backup - obtiene listado de clientes.
     Route::get('backup/poliBackupClientes', 'BackupController@poliBackupClientes')->name('backup.poliBackupClientes');
@@ -657,22 +658,22 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('balancers/visorUnique', 'BalancerController@visorUniqueStore')->name('balancers.visorUniqueStore');
     Route::get('balancers/addSnipNS', 'BalancerController@addSnipNS')->name('balancers.addSnipNS');
     Route::post('balancers/addSnipNS', 'BalancerController@addSnipNSStore')->name('balancers.addSnipNSStore');
-	Route::get('balancers/addVlanSelfipF5', 'BalancerController@addVlanSelfipF5')->name('balancers.addVlanSelfipF5');
+    Route::get('balancers/addVlanSelfipF5', 'BalancerController@addVlanSelfipF5')->name('balancers.addVlanSelfipF5');
     Route::post('balancers/addVlanSelfipF5', 'BalancerController@addVlanSelfipF5Store')->name('balancers.addVlanSelfipF5Store');
     Route::get('balancers/stateTennis', 'BalancerController@stateTennis')->name('balancers.stateTennis');
     Route::post('balancers/stateTennis', 'BalancerController@stateTennisStore')->name('balancers.stateTennisStore');
-	// USE VIEW 135
+    // USE VIEW 135
     Route::get('balancers/addVlanCitrix', 'BalancerController@addVlanCitrix')->name('balancers.addVlanCitrix');
     Route::post('balancers/addVlanCitrix', 'BalancerController@addVlanCitrixStore')->name('balancers.addVlanCitrixStore');
-	//servFiduoccNS
-	Route::get('balancers/servFiduoccNS', 'BalancerController@servFiduoccNS')->name('balancers.servFiduoccNS');
-	Route::post('balancers/servFiduoccNS', 'BalancerController@servFiduoccNsStore')->name('balancers.servFiduoccNsStore');
+    //servFiduoccNS
+    Route::get('balancers/servFiduoccNS', 'BalancerController@servFiduoccNS')->name('balancers.servFiduoccNS');
+    Route::post('balancers/servFiduoccNS', 'BalancerController@servFiduoccNsStore')->name('balancers.servFiduoccNsStore');
     //servFiduBogota
-	Route::get('balancers/servFiduBogota', 'BalancerController@servFiduBogota')->name('balancers.servFiduBogota');
-	Route::post('balancers/servFiduBogota', 'BalancerController@servFiduBogotaStore')->name('balancers.servFiduBogotaStore');
+    Route::get('balancers/servFiduBogota', 'BalancerController@servFiduBogota')->name('balancers.servFiduBogota');
+    Route::post('balancers/servFiduBogota', 'BalancerController@servFiduBogotaStore')->name('balancers.servFiduBogotaStore');
     //servServPostalesNac
-	Route::get('balancers/servServPostalesNac', 'BalancerController@servServPostalesNac')->name('balancers.servServPostalesNac');
-	Route::post('balancers/servServPostalesNac', 'BalancerController@servServPostalesNacStore')->name('balancers.servServPostalesNacStore');
+    Route::get('balancers/servServPostalesNac', 'BalancerController@servServPostalesNac')->name('balancers.servServPostalesNac');
+    Route::post('balancers/servServPostalesNac', 'BalancerController@servServPostalesNacStore')->name('balancers.servServPostalesNacStore');
     //SerCristalNs
     Route::get('balancers/SerCristalNs', 'BalancerController@SerCristalNs')->name('balancers.SerCristalNs');
     Route::post('balancers/SerCristalNs', 'BalancerController@SerCristalNsStore')->name('balancers.SerCristalNsStore');
@@ -735,15 +736,15 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('reports/rdrReport', 'ReportController@getRdrReport')->name('reports.rdrReport');
     Route::get('reports/taskLogs', 'ReportController@taskLogs')->name('reports.tasklogs');
     Route::get('reports/taskLogsReport', 'ReportController@getTaskLogsReport')->name('reports.taskLogsReport');
-     //Reportes Virtualizacion
-     Route::get('reports/virtualization', 'ReportController@getReportsVirtualization')->name('reports/virtualization');
-     Route::get('reports/reportVirtualization', 'ReportController@getRepFilterVirtualization')->name('reports/reportVirtualization');
-     Route::get('reports/getGenerateReportVirt', 'ReportController@getGenerateReportVirt')->name('reports.getGenerateReportVirt');
-     Route::get('reports/getRepGralVirtualization', 'ReportController@getRepGralVirtualization')->name('reports.getGenerateReporGral');
+    //Reportes Virtualizacion
+    Route::get('reports/virtualization', 'ReportController@getReportsVirtualization')->name('reports/virtualization');
+    Route::get('reports/reportVirtualization', 'ReportController@getRepFilterVirtualization')->name('reports/reportVirtualization');
+    Route::get('reports/getGenerateReportVirt', 'ReportController@getGenerateReportVirt')->name('reports.getGenerateReportVirt');
+    Route::get('reports/getRepGralVirtualization', 'ReportController@getRepGralVirtualization')->name('reports.getGenerateReporGral');
     //Trabajos programados
     Route::resource('jobSchedules', 'JobScheduleController')->only('show');
     //Herramientas Externas
-    Route::resource('externalToolLogs', 'ExternalToolLogController')->only('index','show');
+    Route::resource('externalToolLogs', 'ExternalToolLogController')->only('index', 'show');
     //Redes Transversal
     Route::get('networking/getHosts/{inventario}/{grupo}/{method}', 'NetworkingController@getHostsByGroup')->name('networking.getHosts');
     Route::get('networking/valUptime', 'NetworkingController@valUptime')->name('networking.valUptime');
@@ -778,7 +779,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('san/inventories/sanPorts/list', 'SanPortController@list')->name('sanPorts.list');
     Route::get('san/inventories/sanPorts/report', 'SanPortController@report')->name('sanPorts.report');
     Route::get('san/inventories/sanPorts/list/getPorts', 'SanPortController@getPorts')->name('sanPorts.getPorts');
-    Route::resource('san/inventories/sanPorts', 'SanPortController')->except(['create','store']);
+    Route::resource('san/inventories/sanPorts', 'SanPortController')->except(['create', 'store']);
     Route::resource('san/inventories/sanLink', 'SanLinkController')->except('show');
     Route::resource('san/inventories/sanLun', 'SanLunController')->only('index');
     Route::get('san/admin/fabric', 'SanController@fabricCommand')->name('san.fabricCommand');
@@ -793,8 +794,8 @@ Route::group(['middleware' => ['auth']], function() {
     // Telefonia
     Route::get('telephony/logUserAvaya', 'TelephonyController@logUserAvaya')->name('telephony.logUserAvaya');
     //////SOM
-	Route::get('som/reportesom', 'SomController@reportesom')->name('som.reportesom');
-	/////Analytics
+    Route::get('som/reportesom', 'SomController@reportesom')->name('som.reportesom');
+    /////Analytics
     Route::get('analytics/central', 'CentralController@commvault')->name('analytics.central');
 
     /////Cloud
@@ -923,7 +924,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('infrastructure/server/components/tiposCliente', 'TiposClientesController')->except(['show']);
     Route::resource('infrastructure/server/components/clientes', 'ClientesController')->except(['show']);
     Route::resource('infrastructure/server/components/dataCenter', 'DataCentersController')->except(['show']);
-    Route::resource('infrastructure/server/components/tiposHardware', 'TiposHardwareController')->except(['show']);//Problema modelo
+    Route::resource('infrastructure/server/components/tiposHardware', 'TiposHardwareController')->except(['show']); //Problema modelo
     Route::resource('infrastructure/server/components/tiposServicio', 'TiposServiciosController')->except(['show']);
     Route::resource('infrastructure/server/components/tiposRack', 'TiposRacksController')->except(['show']);
     Route::resource('infrastructure/server/components/controladoras', 'ControladorasController')->except(['show']);
@@ -939,7 +940,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('infrastructure/server/server/marcas', 'ServerMarcasController')->parameters(['marcas' => 'serverMarca'])->except(['show']);
     Route::resource('infrastructure/server/server/modelos', 'ServerModelosController')->parameters(['modelos' => 'serverModelo'])->except(['show']);
     Route::get('infrastructure/server/server/updateLogs', 'UpdateLogsController@index')->name('updateLogs.index');
-    Route::get('infrastructure/server/server/updateLogs/{updateLog}','UpdateLogsController@show')->name('updateLogs.show');
+    Route::get('infrastructure/server/server/updateLogs/{updateLog}', 'UpdateLogsController@show')->name('updateLogs.show');
     Route::get('infrastructure/server/server/updatePacks/search', 'UpdatePacksController@search')->name('updatePacks.search');
     Route::post('infrastructure/server/server/updatePacks/search', 'UpdatePacksController@result')->name('updatePacks.result');
     Route::get('infrastructure/server/server/updatePacks/sync/{server}', 'UpdateLogsController@create')->name('updateLogs.create');
@@ -951,7 +952,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('infrastructure/server/server/servers/{server}/edit/{form}', 'ServersController@edit')->name('servers.edit');
     Route::resource('infrastructure/server/server/servers/{server}/hardware/cpus', 'CpusController')->parameters(['cpus' => 'cpu'])->except(['show']);
     Route::get('infrastructure/server/server/servers/{server}/logs', 'UpdateLogsController@logsByServer')->name('updateLogs.byServer');
-    Route::get('infrastructure/server/server/servers/{server}/logs/{updateLog}','UpdateLogsController@view')->name('updateLogs.view');
+    Route::get('infrastructure/server/server/servers/{server}/logs/{updateLog}', 'UpdateLogsController@view')->name('updateLogs.view');
     Route::resource('infrastructure/server/server/servers/{server}/hardware/discos', 'DiscosController')->except(['show']);
     Route::resource('infrastructure/server/server/servers/{server}/hardware/hbas', 'HbasController')->except(['show']);
     Route::resource('infrastructure/server/server/servers/{server}/hardware/memorias', 'MemoriasController')->except(['show']);
@@ -965,32 +966,32 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('turns', 'TurnManagementController@turnManageStore')->name('turns.turnManageStore');
 
     //Recursos UCMDB
-    Route::get('ucmdb/topology','UCMDBController@topology')->name('ucmdb.topology');
+    Route::get('ucmdb/topology', 'UCMDBController@topology')->name('ucmdb.topology');
     //Recursos Recusos Tecnologicos
-    Route::get('recursosTecnologicos/cargueInsumo','recursosTecnologicosController@showCargueInsumo')->name('recursosTecnologicos.cargueInsumo');
+    Route::get('recursosTecnologicos/cargueInsumo', 'recursosTecnologicosController@showCargueInsumo')->name('recursosTecnologicos.cargueInsumo');
 
-     //Gestion - Clientes Novedades Backupo
-     Route::get('clientesNovedadesBku/clientes','ClientesNovedadesBuController@index')->name('novedadesBackup.index');
-     Route::get('clientesNovedadesBku/cliente','ClientesNovedadesBuController@create')->name('novedadesBackup.create');
-     Route::post('clientesNovedadesBku/cliente','ClientesNovedadesBuController@store')->name('novedadesBackup.store');
-     Route::delete('clientesNovedadesBku/cliente/{id}','ClientesNovedadesBuController@destroy')->name('novedadesBackup.destroy');
-     Route::get('clientesNovedadesBku/cliente/{id}/edit','ClientesNovedadesBuController@edit')->name('novedadesBackup.edit');
-     Route::patch('clientesNovedadesBku/cliente/{id}','ClientesNovedadesBuController@update')->name('novedadesBackup.update');
+    //Gestion - Clientes Novedades Backupo
+    Route::get('clientesNovedadesBku/clientes', 'ClientesNovedadesBuController@index')->name('novedadesBackup.index');
+    Route::get('clientesNovedadesBku/cliente', 'ClientesNovedadesBuController@create')->name('novedadesBackup.create');
+    Route::post('clientesNovedadesBku/cliente', 'ClientesNovedadesBuController@store')->name('novedadesBackup.store');
+    Route::delete('clientesNovedadesBku/cliente/{id}', 'ClientesNovedadesBuController@destroy')->name('novedadesBackup.destroy');
+    Route::get('clientesNovedadesBku/cliente/{id}/edit', 'ClientesNovedadesBuController@edit')->name('novedadesBackup.edit');
+    Route::patch('clientesNovedadesBku/cliente/{id}', 'ClientesNovedadesBuController@update')->name('novedadesBackup.update');
 
-     //Notificación Novedades
+    //Notificación Novedades
 
-     Route::get('novedadesBackup/novedadesCliente','NotificarNovedadesController@indexNovedadesCliente')->name('novedadesBackup.indexNovedadesCliente');
-     Route::post('novedadesBackup/novedadesCliente','NotificarNovedadesController@busquedaNovedadesPorCliente')->name('novedadesBackup.busquedaNovedadesPorCliente');
-     Route::post('novedadesBackup/notificarNovedades','NotificarNovedadesController@notificarNovedades')->name('novedadesBackup.notificarNovedades');
-     Route::post('novedadesBackup/notificarNovedadesAjax','NotificarNovedadesController@notificarNovedadesAjax')->name('novedadesBackup.notificarNovedadesAjax');
+    Route::get('novedadesBackup/novedadesCliente', 'NotificarNovedadesController@indexNovedadesCliente')->name('novedadesBackup.indexNovedadesCliente');
+    Route::post('novedadesBackup/novedadesCliente', 'NotificarNovedadesController@busquedaNovedadesPorCliente')->name('novedadesBackup.busquedaNovedadesPorCliente');
+    Route::post('novedadesBackup/notificarNovedades', 'NotificarNovedadesController@notificarNovedades')->name('novedadesBackup.notificarNovedades');
+    Route::post('novedadesBackup/notificarNovedadesAjax', 'NotificarNovedadesController@notificarNovedadesAjax')->name('novedadesBackup.notificarNovedadesAjax');
 
-     //Incidentes
-     Route::get('incidentes/declarar', 'IncidentesController@declararIncidente')->name('incidentes.declarar');
-     Route::get('incidentes/declarar-info', 'IncidentesController@declararIncidenteIFO')->name('incidentes.declararINFO');
-     Route::post('incidentes/declarar', 'IncidentesController@declararIncidenteEndpoint')->name('incidentes.declararStore');
+    //Incidentes
+    Route::get('incidentes/declarar', 'IncidentesController@declararIncidente')->name('incidentes.declarar');
+    Route::get('incidentes/declarar-info', 'IncidentesController@declararIncidenteIFO')->name('incidentes.declararINFO');
+    Route::post('incidentes/declarar', 'IncidentesController@declararIncidenteEndpoint')->name('incidentes.declararStore');
     //SOM
     Route::get('som/checkmaquinavirtual', 'SomController@checkmaquinavirtual');
-    
+
 
     //initiative - INICIATIVAS DE AUTOMATIZACIONES
     Route::resource('initiative', 'InitiativeController')->except('show');

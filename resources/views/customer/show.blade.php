@@ -38,17 +38,19 @@
                 </div>
                 <input type="hidden" id="memory" name="memory" value="0">
             </div>
-
             <td>
-                <label for="vcenterAgregado">{{_('vcenter Agregados') }}</label>
+                <label for="vcenterAgregado" class="col-form-label">{{ _('vcenter Agregados') }}</label>
             </td>
-            </tr>
             <td>
-                <div class="card-footer">
-                    <button type="submit" class="btn btn-sm btn-danger">
-                        <i class="fa fa-save"></i> Guardar
-                    </button>
+                <div class="input-group">
+                    <textarea class="form-control" id="vcenters" name="vcenters" rows="3"></textarea>
                 </div>
+            </td>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-sm btn-danger">
+                    <i class="fa fa-save"></i> Guardar
+                </button>
+            </div>
             </td>
 
         </div>
@@ -78,8 +80,8 @@
     <tbody>
         @foreach ($Vcenter as $vcenter)
         <tr>
-            <td>{{ $vcenter->vcenterID}}</td>
-            <td>{{ $vcenter->vcenterAlias}}</td>
+            <td>{{ $vcenter->vcenterID }}</td>
+            <td>{{ $vcenter->vcenterAlias }}</td>
             <td>{{ $vcenter->segment->segmentName }}</td>
             <td>{{ $vcenter->vcenterIp }}</td>
             @if ($vcenter->customerState == 0)
@@ -87,20 +89,28 @@
             @else
             <td>Activo</td>
             @endif
-            <td>{{ $vcenter->rolesID}}</td>
+            <td>{{ $vcenter->roles->rolesAlias }}</td>
             <td>{{ $vcenter->vcenterVersion }}</td>
             <td>{{ $vcenter->Acciones }}
-                <a href="{{ route('customer.show', 1) }}" title="Agregar vcenter">
-                    <button class="btn btn-sm btn-default">
-                        <i class="fa fa-plus" style="color: red"></i>
+                <a href="#" <button class="btn btn-sm btn-default"
+                    onclick="agregarInformacion('{{ $vcenter->vcenterID }}', '{{ $vcenter->vcenterAlias }}', '{{ $vcenter->segment->segmentName }}', '{{ $vcenter->vcenterIp }}', '{{ $vcenter->customerState == 0 ? 'No Activo' : 'Activo' }}', '{{ $vcenter->roles->rolesAlias }}', '{{ $vcenter->vcenterVersion }}')">
+                    <i class="fa fa-plus" style="color: red"></i>
                     </button>
-                </a>
+
             </td>
         </tr>
         @endforeach
     </tbody>
 </table>
 <script>
+function agregarInformacion(id, alias, segment, ip, estado, rol, version) {
+    var input = document.getElementById('vcenters');
+    var currentValue = input.value;
+
+    // Agregar la información del vCenter seleccionado al input
+    var newValue = currentValue + `${id} - ${alias} - ${segment} - ${ip} - ${estado} - ${rol} - ${version}\n`;
+    input.value = newValue;
+}
 // Obtener el campo de entrada del nombre del cliente por su ID
 var customerNameInput = document.getElementById('customerName');
 

@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class vcenter extends Model
 {
     protected $table = 'central.vcenter';
-   
 
-   // protected $primaryKey = 'customerID';
+
+    // protected $primaryKey = 'customerID';
 
     protected $fillable = [
         'vcenterID',
