@@ -9,6 +9,7 @@
 @if (Session::has('success'))
 {{ Session::get('success') }}
 @endif
+
 @section('plugins.Datatables', true)
 
 @section('content')
