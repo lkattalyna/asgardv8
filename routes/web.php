@@ -1014,6 +1014,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('customer/show/{customerID}', 'CustomerController@show')->name('customer.show');
     Route::delete('/customer/{id}', 'CustomerController@destroy')->name('customer.destroy');
     Route::post('/checkNit', 'CustomerController@checkNit')->name('checkNit');
+    Route::post('customer/guardarInformacion', 'CustomerController@guardarInformacion')->name('customer.guardarInformacion');
 
 
 

@@ -20,10 +20,10 @@
 </div>
 @include('layouts.formError')
 
-<form method="POST" action="{{ route('customer.show', 1) }}">
+<form method="POST" action="{{ route('customer.guardarInformacion') }}" enctype="multipart/form-data">
     <!-- Cambiado de $customer->id a $customer->customerID -->
     @csrf
-    @method('PUT')
+    @method('POST')
     {{ csrf_field() }}
 
     <div class="card card-default">
@@ -41,18 +41,22 @@
             <td>
                 <label for="vcenterAgregado" class="col-form-label">{{ _('vcenter Agregados') }}</label>
             </td>
-            <td>
+            <!-- <td>
                 <div class="input-group">
                     <textarea class="form-control" id="vcenters" name="vcenters" rows="3"></textarea>
                 </div>
-            </td>
+            </td> -->
+            <div id="vcenter-container">
+                <div class="input-group">
+                    <textarea name="vcenter_agregados[][]" hidden class="form-control" rows="2"></textarea> 
+                </div>
+            </div>
             <div class="card-footer">
                 <button type="submit" class="btn btn-sm btn-danger">
                     <i class="fa fa-save"></i> Guardar
                 </button>
             </div>
             </td>
-
         </div>
         </table>
 </form>
@@ -93,7 +97,7 @@
             <td>{{ $vcenter->vcenterVersion }}</td>
             <td>{{ $vcenter->Acciones }}
                 <a href="#" <button class="btn btn-sm btn-default"
-                    onclick="agregarInformacion('{{ $vcenter->vcenterID }}', '{{ $vcenter->vcenterAlias }}', '{{ $vcenter->segment->segmentName }}', '{{ $vcenter->vcenterIp }}', '{{ $vcenter->customerState == 0 ? 'No Activo' : 'Activo' }}', '{{ $vcenter->roles->rolesAlias }}', '{{ $vcenter->vcenterVersion }}')">
+                    onclick="agregarInformacion('{{ $vcenter->vcenterID }}', '{{ $vcenter->vcenterAlias }}')">
                     <i class="fa fa-plus" style="color: red"></i>
                     </button>
 
@@ -103,14 +107,6 @@
     </tbody>
 </table>
 <script>
-function agregarInformacion(id, alias, segment, ip, estado, rol, version) {
-    var input = document.getElementById('vcenters');
-    var currentValue = input.value;
-
-    // Agregar la información del vCenter seleccionado al input
-    var newValue = currentValue + `${id} - ${alias} - ${segment} - ${ip} - ${estado} - ${rol} - ${version}\n`;
-    input.value = newValue;
-}
 // Obtener el campo de entrada del nombre del cliente por su ID
 var customerNameInput = document.getElementById('customerName');
 
@@ -222,6 +218,37 @@ customerNITInput.addEventListener('input', function() {
             "scrollX": true,
         });
     }
+
+    
 });
+
+function agregarInformacion(id, alias) {
+    // Código para agregar vcenter
+    const vcenterContainer = document.getElementById('vcenter-container');
+    console.log('agregando')
+    const nuevoCriterioDiv = document.createElement('div');
+    nuevoCriterioDiv.classList.add('input-group');
+
+    const nuevoCriterio = document.createElement('input');
+    nuevoCriterio.name = 'vcenter_agregados[][]';
+    nuevoCriterio.classList.add('form-control');
+    nuevoCriterio.rows = 1;
+    nuevoCriterio.value = alias
+    nuevoCriterio.id = id
+    nuevoCriterio.disabled = true
+
+    const eliminarCriterioBtn = document.createElement('button');
+    eliminarCriterioBtn.type = 'button';
+    eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
+    eliminarCriterioBtn.textContent = 'Eliminar';
+    eliminarCriterioBtn.addEventListener('click', function() {
+        vcenterContainer.removeChild(nuevoCriterioDiv);
+    });
+
+    nuevoCriterioDiv.appendChild(nuevoCriterio);
+    nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
+    vcenterContainer.appendChild(nuevoCriterioDiv);
+
+}
 </script>
 @stop

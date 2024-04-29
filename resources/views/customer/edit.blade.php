@@ -52,7 +52,7 @@
                         </th>
                         <td>
                             <div class="input-group">
-                                <input type="text" name="customerNIT" id="customerNIT" class="form-control" placeholder="NIT del Cliente" maxlength="12" value="{{ old('customerNIT', $customer->customerNIT) }}" required>
+                                <input type="text" name="customerNIT" id="customerNIT" class="form-control" placeholder="NIT del Cliente" maxlength="10" value="{{ old('customerNIT', $customer->customerNIT) }}" required>
                                 <div class="input-group-append">
                                     <span class="input-group-text" data-toggle="popover" data-html="true" data-placement="left" title="Ayuda" data-content="Indique el NIT del cliente">
                                         <i class="fas fa-question-circle"></i>
@@ -111,6 +111,34 @@
 
             // Actualizar el valor del campo de entrada
             this.value = value;
+            
+        });
+         // Función para verificar si el NIT ya existe
+         function checkNIT() {
+            var nit = $('#customerNIT').val(); // Obtener el valor del NIT
+
+            $.ajax({
+                url: "{{ route('checkNit') }}", // Ruta a tu controlador para verificar el NIT
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    nit: nit
+                },
+                success: function(response) {
+                    if (response.exists) {
+                        $('#nitError').text('El NIT ya existe en nuestros registros.'); // Mostrar mensaje de error
+                        $('#submitBtn').prop('disabled', true); // Deshabilitar el botón de enviar
+                    } else {
+                        $('#nitError').text(''); // Limpiar mensaje de error si no existe
+                        $('#submitBtn').prop('disabled', false); // Habilitar el botón de enviar
+                    }
+                }
+            });
+        }
+
+        // Agregar un evento de escucha para verificar el NIT cuando cambia
+        $('#customerNIT').on('input', function() {
+            checkNIT();
         });
     </script>
 @stop

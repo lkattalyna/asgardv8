@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Models\Customer; // Importante: Asegúrate de usar el modelo correcto aquí
+use App\Models\customer_vcenter;
+use App\Models\Customer; 
 use App\Models\vcenter;
 use App\Segment;
 use App\Models\roles;
@@ -21,7 +25,7 @@ class CustomerController extends Controller
     public function index()
     {
         $datos['Customer'] = Customer::get();
-        Log::info($datos);
+       // Log::info($datos);
 
         return view('customer.index', $datos);
     }
@@ -114,7 +118,7 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        Log::info($id);
+       // Log::info($id);
         $customer = Customer::where('customerID', $id)->delete();
 
         return redirect()->back()->with(
@@ -140,7 +144,7 @@ class CustomerController extends Controller
             $vcenter->roles = $roles;
         }
 
-        Log::info($Vcenter);
+       // Log::info($Vcenter);
         return view('customer.show', compact('Vcenter'));
     }
     public function checkNit(Request $request)
@@ -150,6 +154,26 @@ class CustomerController extends Controller
         $exists = Customer::where('customerNIT', $nit)->exists();
 
         return response()->json(['exists' => $exists]);
+    }
+    public function guardarInformacion(Request $request)
+    {
+        Log::info("Entro aca");
+        Log::info($request);
+        //$datos = $request->all();
+
+        $customer_vcenter = new customer_vcenter();
+        $customer_vcenter->fk_customerID = 10;
+        $customer_vcenter->fk_vcenterID = 1;
+        $customer_vcenter->save();
+
+        //guardar los datos en la base de datos
+    
+        //customer::create($datos);
+
+        // return redirect()->route('customer.index')->with(
+        //     'success',
+        //     'Cliente con id ' . $customerID . ' actualizado correctamente por '  . auth()->user()->name
+        // );
     }
 
 }
