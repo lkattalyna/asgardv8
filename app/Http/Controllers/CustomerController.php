@@ -50,27 +50,27 @@ class CustomerController extends Controller
             'customerNIT' => 'required|string|max:255',
             'customerState' => 'required|string|max:255',
         ]);
-
-        // Crear el cliente
-        $datosCustomer = Customer::create([
-            'customerName' => $request->customerName,
-            'customerNIT' => $request->customerNIT,
-            'customerState' => $request->customerState,
-        ]);
-
+    
+        // Verificar si el NIT ya existe
+        $existingCustomer = Customer::where('customerNIT', $request->customerNIT)->exists();
+    
+        if ($existingCustomer) {
+            return redirect()->back()->withInput()->withErrors(['customerNIT' => 'El NIT ingresado ya existe en nuestros registros.']);
+        }
+    
+        // Si el NIT no existe, proceder con el guardado del cliente
+        $customer = new Customer();
+        $customer->customerName = $request->customerName;
+        $customer->customerNIT = $request->customerNIT;
+        $customer->customerState = $request->customerState;
+        $customer->save();
+    
         // Obtener el ID del cliente recién creado
-        $clienteId = $datosCustomer->customerID;
-
+        $customerID = $customer->customerID;
+    
         // Redireccionar a alguna página después de guardar el cliente
-        return redirect()->route('customer.index')->with('success', 'Cliente registrado exitosamente. ID del cliente: ' . $clienteId);
+        return redirect()->route('customer.index')->with('success', 'Cliente registrado exitosamente. ID del cliente: ' . $customerID);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $customerID
-     * @return \Illuminate\Http\Response
-     */
     public function edit($customerID)
     {
         $customer = Customer::where('customerID', $customerID)->firstOrFail();
@@ -143,4 +143,13 @@ class CustomerController extends Controller
         Log::info($Vcenter);
         return view('customer.show', compact('Vcenter'));
     }
+    public function checkNit(Request $request)
+    {
+        $nit = $request->input('nit');
+
+        $exists = Customer::where('customerNIT', $nit)->exists();
+
+        return response()->json(['exists' => $exists]);
+    }
+
 }

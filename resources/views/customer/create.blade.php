@@ -58,6 +58,7 @@
                                     </span>
                                 </div>
                             </div>
+                            <span id="nitError" class="text-danger"></span> <!-- Aquí se mostrará el mensaje de error -->
                         </td>
                     </tr>
                     <!--Estado del cliente-->
@@ -113,6 +114,34 @@
             // Actualizar el valor del campo de entrada
             this.value = value;
         });
+         // Función para verificar si el NIT ya existe
+         function checkNIT() {
+            var nit = $('#customerNIT').val(); // Obtener el valor del NIT
+
+            $.ajax({
+                url: "{{ route('checkNit') }}", // Ruta a tu controlador para verificar el NIT
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    nit: nit
+                },
+                success: function(response) {
+                    if (response.exists) {
+                        $('#nitError').text('El NIT ya existe en nuestros registros.'); // Mostrar mensaje de error
+                        $('#submitBtn').prop('disabled', true); // Deshabilitar el botón de enviar
+                    } else {
+                        $('#nitError').text(''); // Limpiar mensaje de error si no existe
+                        $('#submitBtn').prop('disabled', false); // Habilitar el botón de enviar
+                    }
+                }
+            });
+        }
+
+        // Agregar un evento de escucha para verificar el NIT cuando cambia
+        $('#customerNIT').on('input', function() {
+            checkNIT();
+        });
     </script>
 @stop
+
 
