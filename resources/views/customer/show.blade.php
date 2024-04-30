@@ -20,7 +20,7 @@
 </div>
 @include('layouts.formError')
 
-<form method="POST" action="{{ route('customer.guardarInformacion') }}" enctype="multipart/form-data">
+<form id="formulario_segregacion" method="POST" action="{{ route('customer.guardarInformacion', ['customerID' => $customerID]) }}" enctype="multipart/form-data">
     <!-- Cambiado de $customer->id a $customer->customerID -->
     @csrf
     @method('POST')
@@ -47,9 +47,7 @@
                 </div>
             </td> -->
             <div id="vcenter-container">
-                <div class="input-group">
-                    <textarea name="vcenter_agregados[][]" hidden class="form-control" rows="2"></textarea> 
-                </div>
+                <!-- vcenter agregados dinamicamente -->
             </div>
             <div class="card-footer">
                 <button type="submit" class="btn btn-sm btn-danger">
@@ -225,19 +223,24 @@ customerNITInput.addEventListener('input', function() {
 function agregarInformacion(id, alias) {
     // Código para agregar vcenter
     const vcenterContainer = document.getElementById('vcenter-container');
-    console.log('agregando')
+    console.log('agregando - ' + id)
     const nuevoCriterioDiv = document.createElement('div');
     nuevoCriterioDiv.classList.add('input-group');
 
+    const nuevoCriterioHidden = document.createElement('input');
+    nuevoCriterioHidden.name = 'vcenter_agregados[][id]';
+    nuevoCriterioHidden.type = 'hidden';
+    nuevoCriterioHidden.value = id;
+
     const nuevoCriterio = document.createElement('input');
-    nuevoCriterio.name = 'vcenter_agregados[][]';
+    nuevoCriterio.name = 'vcenter_agregados[][visible]';
     nuevoCriterio.classList.add('form-control');
     nuevoCriterio.rows = 1;
     nuevoCriterio.value = alias
     nuevoCriterio.id = id
     nuevoCriterio.disabled = true
 
-    const eliminarCriterioBtn = document.createElement('button');
+     const eliminarCriterioBtn = document.createElement('button');
     eliminarCriterioBtn.type = 'button';
     eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
     eliminarCriterioBtn.textContent = 'Eliminar';
@@ -245,10 +248,10 @@ function agregarInformacion(id, alias) {
         vcenterContainer.removeChild(nuevoCriterioDiv);
     });
 
+    nuevoCriterioDiv.appendChild(nuevoCriterioHidden);
     nuevoCriterioDiv.appendChild(nuevoCriterio);
     nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
     vcenterContainer.appendChild(nuevoCriterioDiv);
-
 }
 </script>
 @stop

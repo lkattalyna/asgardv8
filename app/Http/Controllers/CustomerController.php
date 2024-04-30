@@ -12,6 +12,7 @@ use App\Models\Customer;
 use App\Models\vcenter;
 use App\Segment;
 use App\Models\roles;
+use Illuminate\Http\RedirectResponse;
 
 
 
@@ -145,7 +146,7 @@ class CustomerController extends Controller
         }
 
        // Log::info($Vcenter);
-        return view('customer.show', compact('Vcenter'));
+        return view('customer.show', compact('Vcenter', 'customerID'));
     }
     public function checkNit(Request $request)
     {
@@ -155,25 +156,32 @@ class CustomerController extends Controller
 
         return response()->json(['exists' => $exists]);
     }
-    public function guardarInformacion(Request $request)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+
+     */
+    public function guardarInformacion(Request $request, $customerID)
     {
-        Log::info("Entro aca");
-        Log::info($request);
-        //$datos = $request->all();
+        $vcenter_agregados = $request->input('vcenter_agregados');
+        
+        if ($vcenter_agregados != null) 
+        {
+            foreach ($vcenter_agregados as $vcenter) {
+                customer_vcenter::create([
+                    'fk_customerID' => $customerID,
+                    'fk_vcenterID' => $vcenter['id']
+                ]);
+            }
+        }
 
-        $customer_vcenter = new customer_vcenter();
-        $customer_vcenter->fk_customerID = 10;
-        $customer_vcenter->fk_vcenterID = 1;
-        $customer_vcenter->save();
-
-        //guardar los datos en la base de datos
-    
-        //customer::create($datos);
-
-        // return redirect()->route('customer.index')->with(
-        //     'success',
-        //     'Cliente con id ' . $customerID . ' actualizado correctamente por '  . auth()->user()->name
-        // );
+        return redirect()->route('customer.index')->with(
+            'success',
+            'Se ha completado la segregación del id ' . $customerID . ' ejecutado por '  . auth()->user()->name
+        );
+         
     }
 
 }

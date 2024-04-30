@@ -13,9 +13,11 @@ class customer_vcenter extends Model
 
     protected $primaryKey = 'customervcenterID';
     
+    
     protected $fillable = 
     [
         'fk_customerID',
-        'fk_vcenterID'
+        'fk_vcenterID',
+        
     ];
 }
