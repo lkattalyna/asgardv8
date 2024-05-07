@@ -261,37 +261,50 @@
         });
 
         function agregarInformacion(id, alias) {
-    // Código para agregar vcenter
-    const vcenterContainer = document.getElementById('vcenter-container');
-    console.log('agregando - ' + id)
-    const nuevoCriterioDiv = document.createElement('div');
-    nuevoCriterioDiv.classList.add('input-group');
+        // Verificar si el vCenter ya está presente
+        var vcenterContainer = document.getElementById('vcenter-container');
+        var alreadyAdded = false;
 
-    const nuevoCriterioHidden = document.createElement('input');
-    nuevoCriterioHidden.name = 'vcenter_agregados[][id]';
-    nuevoCriterioHidden.type = 'hidden';
-    nuevoCriterioHidden.value = id;
+        vcenterContainer.querySelectorAll('input[name="vcenter_agregados[][id]"]').forEach(function(input) {
+            if (input.value === id) {
+                alreadyAdded = true;
+            }
+        });
 
-    const nuevoCriterio = document.createElement('input');
-    nuevoCriterio.name = 'vcenter_agregados[][visible]';
-    nuevoCriterio.classList.add('form-control');
-    nuevoCriterio.rows = 1;
-    nuevoCriterio.value = alias
-    nuevoCriterio.id = id
-    nuevoCriterio.disabled = true
+        if (alreadyAdded) {
+            alert("¡Este vCenter ya ha sido agregado!");
+            return;
+        }
 
-    const eliminarCriterioBtn = document.createElement('button');
-    eliminarCriterioBtn.type = 'button';
-    eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
-    eliminarCriterioBtn.textContent = 'Eliminar';
-    eliminarCriterioBtn.addEventListener('click', function() {
-        vcenterContainer.removeChild(nuevoCriterioDiv);
-    });
+        // Si no está presente, agregarlo
+        var nuevoCriterioDiv = document.createElement('div');
+        nuevoCriterioDiv.classList.add('input-group');
 
-    nuevoCriterioDiv.appendChild(nuevoCriterioHidden);
-    nuevoCriterioDiv.appendChild(nuevoCriterio);
-    nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
-    vcenterContainer.appendChild(nuevoCriterioDiv);
-}
+        var nuevoCriterioHidden = document.createElement('input');
+        nuevoCriterioHidden.name = 'vcenter_agregados[][id]';
+        nuevoCriterioHidden.type = 'hidden';
+        nuevoCriterioHidden.value = id;
+
+        var nuevoCriterio = document.createElement('input');
+        nuevoCriterio.name = 'vcenter_agregados[][visible]';
+        nuevoCriterio.classList.add('form-control');
+        nuevoCriterio.rows = 1;
+        nuevoCriterio.value = alias;
+        nuevoCriterio.id = id;
+        nuevoCriterio.disabled = true;
+
+        var eliminarCriterioBtn = document.createElement('button');
+        eliminarCriterioBtn.type = 'button';
+        eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
+        eliminarCriterioBtn.textContent = 'Eliminar';
+        eliminarCriterioBtn.addEventListener('click', function() {
+            vcenterContainer.removeChild(nuevoCriterioDiv);
+        });
+
+        nuevoCriterioDiv.appendChild(nuevoCriterioHidden);
+        nuevoCriterioDiv.appendChild(nuevoCriterio);
+        nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
+        vcenterContainer.appendChild(nuevoCriterioDiv);
+    }
 </script>
 @stop
