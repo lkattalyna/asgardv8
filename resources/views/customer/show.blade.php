@@ -43,10 +43,10 @@
                     <label for="vcenterAgregado" class="col-form-label">{{ _('vcenter Agregados') }}</label>
                 </td>
                 <!-- <td>
-                            <div class="input-group">
-                                <textarea class="form-control" id="vcenters" name="vcenters" rows="3"></textarea>
-                            </div>
-                        </td> -->
+                                <div class="input-group">
+                                    <textarea class="form-control" id="vcenters" name="vcenters" rows="3"></textarea>
+                                </div>
+                            </td> -->
                 <div id="vcenter-container">
                     <!-- vcenter agregados dinamicamente -->
                 </div>
@@ -69,11 +69,14 @@
                 </div>
                 <div class="card-body">
                     <div class="row justify-content-end">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <input type="text" id="searchInput" class="form-control" placeholder="Buscar por Alias">
-                                <div class="input-group-append">
-                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="input-group input-group-lg">
+                                    <input type="text" id="searchInput" class="form-control form-control-lg"
+                                        placeholder="Buscar por Alias">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
