@@ -32,7 +32,6 @@
                 <p>Este formulario permitirá agregar los vcenter asociados al cliente</p>
             </div>
             <div class="card-body">
-
                 <div class="card card-default">
                     <div class="card-header with-border" style="background: #dfe1e4;">
                         <h3 class="card-title">Vcenter</h3>
@@ -42,13 +41,17 @@
                 <td>
                     <label for="vcenterAgregado" class="col-form-label">{{ _('vcenter Agregados') }}</label>
                 </td>
-                <!-- <td>
-                                <div class="input-group">
-                                    <textarea class="form-control" id="vcenters" name="vcenters" rows="3"></textarea>
-                                </div>
-                            </td> -->
+                
                 <div id="vcenter-container">
                     <!-- vcenter agregados dinamicamente -->
+                    @foreach ($CustomerVcenters as $vcenterCustomer)
+                <div class="input-group">
+                    <input type="hidden" name="vcenter_agregados[][id]" value ="{{$vcenterCustomer->fk_vcenterID}}"/>
+                    <input class="form-control" name="vcenter_agregados[][visible]" id="{{$vcenterCustomer->fk_vcenterID}}" value="{{ $vcenterCustomer->vcenterData->vcenterAlias }}" disabled>
+                    <button class="'btn btn-sm btn-danger ml-2" onclick="document.getElementById('nuevoCriterioDiv').remove()">Eliminar</button>
+                </div>
+                    <!-- Otros campos del formulario -->
+                @endforeach
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-sm btn-danger">
@@ -258,50 +261,37 @@
         });
 
         function agregarInformacion(id, alias) {
-        // Verificar si el vCenter ya está presente
-        var vcenterContainer = document.getElementById('vcenter-container');
-        var alreadyAdded = false;
+    // Código para agregar vcenter
+    const vcenterContainer = document.getElementById('vcenter-container');
+    console.log('agregando - ' + id)
+    const nuevoCriterioDiv = document.createElement('div');
+    nuevoCriterioDiv.classList.add('input-group');
 
-        vcenterContainer.querySelectorAll('input[name="vcenter_agregados[][id]"]').forEach(function(input) {
-            if (input.value === id) {
-                alreadyAdded = true;
-            }
-        });
+    const nuevoCriterioHidden = document.createElement('input');
+    nuevoCriterioHidden.name = 'vcenter_agregados[][id]';
+    nuevoCriterioHidden.type = 'hidden';
+    nuevoCriterioHidden.value = id;
 
-        if (alreadyAdded) {
-            alert("¡Este vCenter ya ha sido agregado!");
-            return;
-        }
+    const nuevoCriterio = document.createElement('input');
+    nuevoCriterio.name = 'vcenter_agregados[][visible]';
+    nuevoCriterio.classList.add('form-control');
+    nuevoCriterio.rows = 1;
+    nuevoCriterio.value = alias
+    nuevoCriterio.id = id
+    nuevoCriterio.disabled = true
 
-        // Si no está presente, agregarlo
-        var nuevoCriterioDiv = document.createElement('div');
-        nuevoCriterioDiv.classList.add('input-group');
+    const eliminarCriterioBtn = document.createElement('button');
+    eliminarCriterioBtn.type = 'button';
+    eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
+    eliminarCriterioBtn.textContent = 'Eliminar';
+    eliminarCriterioBtn.addEventListener('click', function() {
+        vcenterContainer.removeChild(nuevoCriterioDiv);
+    });
 
-        var nuevoCriterioHidden = document.createElement('input');
-        nuevoCriterioHidden.name = 'vcenter_agregados[][id]';
-        nuevoCriterioHidden.type = 'hidden';
-        nuevoCriterioHidden.value = id;
-
-        var nuevoCriterio = document.createElement('input');
-        nuevoCriterio.name = 'vcenter_agregados[][visible]';
-        nuevoCriterio.classList.add('form-control');
-        nuevoCriterio.rows = 1;
-        nuevoCriterio.value = alias;
-        nuevoCriterio.id = id;
-        nuevoCriterio.disabled = true;
-
-        var eliminarCriterioBtn = document.createElement('button');
-        eliminarCriterioBtn.type = 'button';
-        eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
-        eliminarCriterioBtn.textContent = 'Eliminar';
-        eliminarCriterioBtn.addEventListener('click', function() {
-            vcenterContainer.removeChild(nuevoCriterioDiv);
-        });
-
-        nuevoCriterioDiv.appendChild(nuevoCriterioHidden);
-        nuevoCriterioDiv.appendChild(nuevoCriterio);
-        nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
-        vcenterContainer.appendChild(nuevoCriterioDiv);
-    }
-    </script>
+    nuevoCriterioDiv.appendChild(nuevoCriterioHidden);
+    nuevoCriterioDiv.appendChild(nuevoCriterio);
+    nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
+    vcenterContainer.appendChild(nuevoCriterioDiv);
+}
+</script>
 @stop

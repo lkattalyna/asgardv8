@@ -144,9 +144,16 @@ class CustomerController extends Controller
             $vcenter->segment = $segment;
             $vcenter->roles = $roles;
         }
+        
+        $CustomerVcenters = customer_vcenter::where('fk_customerID', $customerID)->get();
+        
+        foreach ($CustomerVcenters as $vcenter) {
+            $vcenterData = vcenter::where('vcenterID', $vcenter->fk_vcenterID)->firstOrFail();
+            $vcenter->vcenterData = $vcenterData;
+        }
 
-       // Log::info($Vcenter);
-        return view('customer.show', compact('Vcenter', 'customerID'));
+
+        return view('customer.show', compact('Vcenter', 'customerID', 'CustomerVcenters'));
     }
     public function checkNit(Request $request)
     {
@@ -167,13 +174,23 @@ class CustomerController extends Controller
     {
         $vcenter_agregados = $request->input('vcenter_agregados');
         
+        Log::Info($vcenter_agregados);
+
         if ($vcenter_agregados != null) 
         {
             foreach ($vcenter_agregados as $vcenter) {
-                customer_vcenter::create([
-                    'fk_customerID' => $customerID,
-                    'fk_vcenterID' => $vcenter['id']
-                ]);
+
+                $exists = customer_vcenter::where('fk_customerID', $customerID)
+                    ->where('fk_vcenterID', $vcenter['id'])->exists();
+
+                if (!$exists)
+                {
+                    customer_vcenter::create([
+                        'fk_customerID' => $customerID,
+                        'fk_vcenterID' => $vcenter['id']
+                    ]);
+                }
+                
             }
         }
 
@@ -181,7 +198,5 @@ class CustomerController extends Controller
             'success',
             'Se ha completado la segregación del id ' . $customerID . ' ejecutado por '  . auth()->user()->name
         );
-         
     }
-
 }
