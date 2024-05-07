@@ -22,42 +22,27 @@
 
     <form id="formulario_segregacion" method="POST"
         action="{{ route('customer.guardarInformacion', ['customerID' => $customerID]) }}" enctype="multipart/form-data">
-        <!-- Cambiado de $customer->id a $customer->customerID -->
         @csrf
-        @method('POST')
-        {{ csrf_field() }}
 
-        <div class="card card-default">
-            <div class="card-header with-border">
-                <p>Este formulario permitirá agregar los vcenter asociados al cliente</p>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Agregar VCenters asociados al cliente</h5>
             </div>
             <div class="card-body">
-
-                <div class="card card-default">
-                    <div class="card-header with-border" style="background: #dfe1e4;">
-                        <h3 class="card-title">Vcenter</h3>
+                <div class="form-group">
+                    <label for="vcenterAgregado">vCenters Agregados</label>
+                    <div id="vcenter-container">
+                        <!-- Aquí se agregarán dinámicamente los vCenters -->
                     </div>
-                    <input type="hidden" id="memory" name="memory" value="0">
                 </div>
-                <td>
-                    <label for="vcenterAgregado" class="col-form-label">{{ _('vcenter Agregados') }}</label>
-                </td>
-                <!-- <td>
-                                <div class="input-group">
-                                    <textarea class="form-control" id="vcenters" name="vcenters" rows="3"></textarea>
-                                </div>
-                            </td> -->
-                <div id="vcenter-container">
-                    <!-- vcenter agregados dinamicamente -->
-                </div>
-                <div class="card-footer">
-                    <button type="submit" class="btn btn-sm btn-danger">
-                        <i class="fa fa-save"></i> Guardar
-                    </button>
-                </div>
-                </td>
             </div>
-            </table>
+            <div class="card-footer d-flex justify-content-end">
+                <button type="submit" class="btn btn-sm btn-danger">
+                    <i class="fa fa-save"></i> Guardar
+                </button>
+            </div>
+
+        </div>
     </form>
 
 
@@ -121,184 +106,185 @@
         </tbody>
     </table>
     <script>
-    function filterTable() {
-        var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById("searchInput");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("example1");
-        tr = table.getElementsByTagName("tr");
+        function filterTable() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("example1");
+            tr = table.getElementsByTagName("tr");
 
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[1]; // Columna del Alias
-            if (td) {
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1]; // Columna del Alias
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
                 }
             }
         }
-    }
 
-    document.getElementById("searchInput").addEventListener("keyup", filterTable);
+        document.getElementById("searchInput").addEventListener("keyup", filterTable);
 
-    // Obtener el campo de entrada del nombre del cliente por su ID
-    var customerNameInput = document.getElementById('customerName');
+        // Obtener el campo de entrada del nombre del cliente por su ID
+        var customerNameInput = document.getElementById('customerName');
 
-    // Agregar un evento de escucha para el evento 'input'
-    customerNameInput.addEventListener('input', function() {
-        // Convertir el valor del campo a mayúsculas y actualizar el valor del campo
-        this.value = this.value.toUpperCase();
-    });
-
-    // Obtener el campo de entrada del NIT por su ID
-    var customerNITInput = document.getElementById('customerNIT');
-
-    // Agregar un evento de escucha para el evento 'input'
-    customerNITInput.addEventListener('input', function() {
-        // Obtener el valor del campo de entrada
-        var value = this.value.trim();
-
-        // Eliminar cualquier carácter que no sea un dígito
-        value = value.replace(/\D/g, '');
-
-        // Añadir guion antes del último dígito si hay 10 dígitos
-        if (value.length === 10) {
-            value = value.slice(0, -1) + '-' + value.slice(-1);
-        }
-
-        // Actualizar el valor del campo de entrada
-        this.value = value;
-
-        $(document).ready(function() {
-            $('#formfield').keypress(function(e) {
-                if (e.which == 13) {
-                    return false;
-                }
-            });
-            $('#sendForm').on('click', function() {
-                swal({
-                    title: "¿Esta seguro?",
-                    text: "Esta completamente seguro de ejecutar la tarea con los parametros seleccionados",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                    buttons: ["Cancelar", "Si, estoy seguro"],
-                }).then((seguro) => {
-                    if (seguro) {
-                        if ($('#formfield')[0].checkValidity()) {
-                            $('#formfield').submit();
-                        } else {
-                            $('#formfield')[0].reportValidity();
-                        }
-                    }
-                });
-            });
-            $('#vHost').select2({
-                maximumSelectionLength: 10
-            });
+        // Agregar un evento de escucha para el evento 'input'
+        customerNameInput.addEventListener('input', function() {
+            // Convertir el valor del campo a mayúsculas y actualizar el valor del campo
+            this.value = this.value.toUpperCase();
         });
 
-        $(document).on("click", ".Vlink", function(e) {
-            var selectedId = $(this).data('id');
-            var selectedVcenter = $(this).data('vcenter');
-            var selectedName = $(this).data('name');
-            
-            // Verificar si el vCenter ya está seleccionado
-            var alreadySelected = false;
-            $("#vHost option:selected").each(function() {
-                if ($(this).val().startsWith(selectedId)) {
-                    alreadySelected = true;
+        // Obtener el campo de entrada del NIT por su ID
+        var customerNITInput = document.getElementById('customerNIT');
+
+        // Agregar un evento de escucha para el evento 'input'
+        customerNITInput.addEventListener('input', function() {
+            // Obtener el valor del campo de entrada
+            var value = this.value.trim();
+
+            // Eliminar cualquier carácter que no sea un dígito
+            value = value.replace(/\D/g, '');
+
+            // Añadir guion antes del último dígito si hay 10 dígitos
+            if (value.length === 10) {
+                value = value.slice(0, -1) + '-' + value.slice(-1);
+            }
+
+            // Actualizar el valor del campo de entrada
+            this.value = value;
+
+            $(document).ready(function() {
+                $('#formfield').keypress(function(e) {
+                    if (e.which == 13) {
+                        return false;
+                    }
+                });
+                $('#sendForm').on('click', function() {
+                    swal({
+                        title: "¿Esta seguro?",
+                        text: "Esta completamente seguro de ejecutar la tarea con los parametros seleccionados",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                        buttons: ["Cancelar", "Si, estoy seguro"],
+                    }).then((seguro) => {
+                        if (seguro) {
+                            if ($('#formfield')[0].checkValidity()) {
+                                $('#formfield').submit();
+                            } else {
+                                $('#formfield')[0].reportValidity();
+                            }
+                        }
+                    });
+                });
+                $('#vHost').select2({
+                    maximumSelectionLength: 10
+                });
+            });
+
+            $(document).on("click", ".Vlink", function(e) {
+                var selectedId = $(this).data('id');
+                var selectedVcenter = $(this).data('vcenter');
+                var selectedName = $(this).data('name');
+
+                // Verificar si el vCenter ya está seleccionado
+                var alreadySelected = false;
+                $("#vHost option:selected").each(function() {
+                    if ($(this).val().startsWith(selectedId)) {
+                        alreadySelected = true;
+                    }
+                });
+
+                if (alreadySelected) {
+                    alert("¡Este vCenter ya ha sido agregado!");
+                    return;
+                }
+
+                // Si no está seleccionado, agregarlo
+                $("#vHost").append('<option value="' + selectedId + ',' + selectedVcenter + '" selected>' +
+                    selectedName + '</option>');
+            });
+
+            function createTable() {
+                $('#example1').dataTable({
+                    "language": {
+                        "sProcessing": "Procesando...",
+                        "sLengthMenu": "Mostrar _MENU_ registros",
+                        "sZeroRecords": "No se encontraron resultados",
+                        "sEmptyTable": "Ningún dato disponible en esta tabla",
+                        "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                        "sInfoPostFix": "",
+                        "sSearch": "Buscar:",
+                        "sUrl": "",
+                        "sInfoThousands": ",",
+                        "sLoadingRecords": "Cargando...",
+                        "oPaginate": {
+                            "sFirst": "Primero",
+                            "sLast": "Último",
+                            "sNext": "Siguiente",
+                            "sPrevious": "Anterior"
+                        },
+                        "oAria": {
+                            "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                        }
+                    },
+                    "scrollX": true,
+                });
+            }
+        });
+
+        function agregarInformacion(id, alias) {
+            // Verificar si el vCenter ya está presente
+            var vcenterContainer = document.getElementById('vcenter-container');
+            var alreadyAdded = false;
+
+            vcenterContainer.querySelectorAll('input[name="vcenter_agregados[][id]"]').forEach(function(input) {
+                if (input.value === id) {
+                    alreadyAdded = true;
                 }
             });
-            
-            if (alreadySelected) {
+
+            if (alreadyAdded) {
                 alert("¡Este vCenter ya ha sido agregado!");
                 return;
             }
-            
-            // Si no está seleccionado, agregarlo
-            $("#vHost").append('<option value="' + selectedId + ',' + selectedVcenter + '" selected>' + selectedName + '</option>');
-        });
 
-        function createTable() {
-            $('#example1').dataTable({
-                "language": {
-                    "sProcessing": "Procesando...",
-                    "sLengthMenu": "Mostrar _MENU_ registros",
-                    "sZeroRecords": "No se encontraron resultados",
-                    "sEmptyTable": "Ningún dato disponible en esta tabla",
-                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                    "sInfoPostFix": "",
-                    "sSearch": "Buscar:",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
-                    "sLoadingRecords": "Cargando...",
-                    "oPaginate": {
-                        "sFirst": "Primero",
-                        "sLast": "Último",
-                        "sNext": "Siguiente",
-                        "sPrevious": "Anterior"
-                    },
-                    "oAria": {
-                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                    }
-                },
-                "scrollX": true,
+            // Si no está presente, agregarlo
+            var nuevoCriterioDiv = document.createElement('div');
+            nuevoCriterioDiv.classList.add('input-group');
+
+            var nuevoCriterioHidden = document.createElement('input');
+            nuevoCriterioHidden.name = 'vcenter_agregados[][id]';
+            nuevoCriterioHidden.type = 'hidden';
+            nuevoCriterioHidden.value = id;
+
+            var nuevoCriterio = document.createElement('input');
+            nuevoCriterio.name = 'vcenter_agregados[][visible]';
+            nuevoCriterio.classList.add('form-control');
+            nuevoCriterio.rows = 1;
+            nuevoCriterio.value = alias;
+            nuevoCriterio.id = id;
+            nuevoCriterio.disabled = true;
+
+            var eliminarCriterioBtn = document.createElement('button');
+            eliminarCriterioBtn.type = 'button';
+            eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
+            eliminarCriterioBtn.textContent = 'Eliminar';
+            eliminarCriterioBtn.addEventListener('click', function() {
+                vcenterContainer.removeChild(nuevoCriterioDiv);
             });
+
+            nuevoCriterioDiv.appendChild(nuevoCriterioHidden);
+            nuevoCriterioDiv.appendChild(nuevoCriterio);
+            nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
+            vcenterContainer.appendChild(nuevoCriterioDiv);
         }
-    });
-
-    function agregarInformacion(id, alias) {
-        // Verificar si el vCenter ya está presente
-        var vcenterContainer = document.getElementById('vcenter-container');
-        var alreadyAdded = false;
-
-        vcenterContainer.querySelectorAll('input[name="vcenter_agregados[][id]"]').forEach(function(input) {
-            if (input.value === id) {
-                alreadyAdded = true;
-            }
-        });
-
-        if (alreadyAdded) {
-            alert("¡Este vCenter ya ha sido agregado!");
-            return;
-        }
-
-        // Si no está presente, agregarlo
-        var nuevoCriterioDiv = document.createElement('div');
-        nuevoCriterioDiv.classList.add('input-group');
-
-        var nuevoCriterioHidden = document.createElement('input');
-        nuevoCriterioHidden.name = 'vcenter_agregados[][id]';
-        nuevoCriterioHidden.type = 'hidden';
-        nuevoCriterioHidden.value = id;
-
-        var nuevoCriterio = document.createElement('input');
-        nuevoCriterio.name = 'vcenter_agregados[][visible]';
-        nuevoCriterio.classList.add('form-control');
-        nuevoCriterio.rows = 1;
-        nuevoCriterio.value = alias;
-        nuevoCriterio.id = id;
-        nuevoCriterio.disabled = true;
-
-        var eliminarCriterioBtn = document.createElement('button');
-        eliminarCriterioBtn.type = 'button';
-        eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
-        eliminarCriterioBtn.textContent = 'Eliminar';
-        eliminarCriterioBtn.addEventListener('click', function() {
-            vcenterContainer.removeChild(nuevoCriterioDiv);
-        });
-
-        nuevoCriterioDiv.appendChild(nuevoCriterioHidden);
-        nuevoCriterioDiv.appendChild(nuevoCriterio);
-        nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
-        vcenterContainer.appendChild(nuevoCriterioDiv);
-    }
-</script>
+    </script>
 
 @stop
