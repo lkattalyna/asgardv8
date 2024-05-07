@@ -1013,10 +1013,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/customer/{customerID}/edit', 'CustomerController@edit')->name('customer.edit');
     Route::get('customer/show/{customerID}', 'CustomerController@show')->name('customer.show');
     Route::delete('/customer/{id}', 'CustomerController@destroy')->name('customer.destroy');
-<<<<<<< HEAD
-=======
     Route::post('/checkNit', 'CustomerController@checkNit')->name('checkNit');
->>>>>>> 155db5f0776830a8012ab71729e2cd8acaf9c1cc
     Route::post('customer/guardarInformacion/{customerID}', 'CustomerController@guardarInformacion')->name('customer.guardarInformacion');
 
 
