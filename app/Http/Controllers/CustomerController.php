@@ -170,7 +170,7 @@ class CustomerController extends Controller
 
      */
     public function guardarInformacion(Request $request, $customerID)
-{
+    {
     $vcenter_agregados = $request->input('vcenter_agregados');
 
     // Obtener los IDs de los vCenters agregados
@@ -188,10 +188,7 @@ class CustomerController extends Controller
         customer_vcenter::where('fk_customerID', $customerID)
             ->whereIn('fk_vcenterID', $vcenters_a_eliminar)
             ->delete();
-    } else {
-        // Si no hay vCenters para eliminar, eliminar todos los vCenters asociados al cliente
-        customer_vcenter::where('fk_customerID', $customerID)->delete();
-    }
+    } 
 
     // Agregar los vCenters que no estén ya asociados al cliente
     foreach ($vcenter_agregados as $vcenter) {
