@@ -134,27 +134,26 @@ class CustomerController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function show(Request $request, $customerID)
-    {
-        $Vcenter = vcenter::get();
-
-        foreach ($Vcenter as $vcenter) {
-            $segment = Segment::find($vcenter->fk_segmentID);
-            $roles = roles::find($vcenter->rolesID);
-            $vcenter->segment = $segment;
-            $vcenter->roles = $roles;
-        }
-        
-        $CustomerVcenters = customer_vcenter::where('fk_customerID', $customerID)->get();
-        
-        foreach ($CustomerVcenters as $vcenter) {
-            $vcenterData = vcenter::where('vcenterID', $vcenter->fk_vcenterID)->firstOrFail();
-            $vcenter->vcenterData = $vcenterData;
-        }
-
-
-        return view('customer.show', compact('Vcenter', 'customerID', 'CustomerVcenters'));
-    }
+     public function show(Request $request, $customerID)
+     {
+         $Vcenter = vcenter::paginate(10); // Obtener vcenters paginados
+     
+         foreach ($Vcenter as $vcenter) {
+             $segment = Segment::find($vcenter->fk_segmentID);
+             $roles = roles::find($vcenter->rolesID);
+             $vcenter->segment = $segment;
+             $vcenter->roles = $roles;
+         }
+         
+         $CustomerVcenters = customer_vcenter::where('fk_customerID', $customerID)->get();
+         
+         foreach ($CustomerVcenters as $vcenter) {
+             $vcenterData = vcenter::where('vcenterID', $vcenter->fk_vcenterID)->firstOrFail();
+             $vcenter->vcenterData = $vcenterData;
+         }
+     
+         return view('customer.show', compact('Vcenter', 'customerID', 'CustomerVcenters'));
+     }
     public function checkNit(Request $request)
     {
         $nit = $request->input('nit');
@@ -171,32 +170,39 @@ class CustomerController extends Controller
 
      */
     public function guardarInformacion(Request $request, $customerID)
-    {
-        $vcenter_agregados = $request->input('vcenter_agregados');
-        
-        Log::Info($vcenter_agregados);
+{
+    $vcenter_agregados = $request->input('vcenter_agregados');
+    
+    // Obtener los IDs de los vCenters agregados
+    $vcenter_ids = array_column($vcenter_agregados, 'id');
 
-        if ($vcenter_agregados != null) 
-        {
-            foreach ($vcenter_agregados as $vcenter) {
+    // Obtener los IDs de los vCenters asociados al cliente actual
+    $existing_vcenter_ids = customer_vcenter::where('fk_customerID', $customerID)
+        ->pluck('fk_vcenterID')
+        ->toArray();
 
-                $exists = customer_vcenter::where('fk_customerID', $customerID)
-                    ->where('fk_vcenterID', $vcenter['id'])->exists();
-
-                if (!$exists)
-                {
-                    customer_vcenter::create([
-                        'fk_customerID' => $customerID,
-                        'fk_vcenterID' => $vcenter['id']
-                    ]);
-                }
-                
-            }
-        }
-
-        return redirect()->route('customer.index')->with(
-            'success',
-            'Se ha completado la segregación del id ' . $customerID . ' ejecutado por '  . auth()->user()->name
-        );
+    // Eliminar los vCenters que ya no están en la lista de vCenter agregados
+    $vcenters_a_eliminar = array_diff($existing_vcenter_ids, $vcenter_ids);
+    if (!empty($vcenters_a_eliminar)) {
+        customer_vcenter::where('fk_customerID', $customerID)
+            ->whereIn('fk_vcenterID', $vcenters_a_eliminar)
+            ->delete();
     }
+
+    // Agregar los vCenters que no estén ya asociados al cliente
+    foreach ($vcenter_agregados as $vcenter) {
+        if (!in_array($vcenter['id'], $existing_vcenter_ids)) {
+            customer_vcenter::create([
+                'fk_customerID' => $customerID,
+                'fk_vcenterID' => $vcenter['id']
+            ]);
+        }
+    }
+
+    return redirect()->route('customer.index')->with(
+        'success',
+        'Se ha completado la segregación del id ' . $customerID . ' ejecutado por '  . auth()->user()->name
+    );
+}
+
 }

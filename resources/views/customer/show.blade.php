@@ -20,9 +20,7 @@
     </div>
     @include('layouts.formError')
 
-    <form id="formulario_segregacion" method="POST"
-        action="{{ route('customer.guardarInformacion', ['customerID' => $customerID]) }}" enctype="multipart/form-data">
-        <!-- Cambiado de $customer->id a $customer->customerID -->
+    <form id="formulario_segregacion" method="POST" action="{{ route('customer.guardarInformacion', ['customerID' => $customerID]) }}" enctype="multipart/form-data">
         @csrf
         @method('POST')
         {{ csrf_field() }}
@@ -45,48 +43,44 @@
                 <div id="vcenter-container">
                     <!-- vcenter agregados dinamicamente -->
                     @foreach ($CustomerVcenters as $vcenterCustomer)
-                <div class="input-group">
-                    <input type="hidden" name="vcenter_agregados[][id]" value ="{{$vcenterCustomer->fk_vcenterID}}"/>
-                    <input class="form-control" name="vcenter_agregados[][visible]" id="{{$vcenterCustomer->fk_vcenterID}}" value="{{ $vcenterCustomer->vcenterData->vcenterAlias }}" disabled>
-                    <button class="'btn btn-sm btn-danger ml-2" onclick="document.getElementById('nuevoCriterioDiv').remove()">Eliminar</button>
-                </div>
-                    <!-- Otros campos del formulario -->
-                @endforeach
+                        <div class="input-group">
+                            <input type="hidden" name="vcenter_agregados[][id]" value ="{{$vcenterCustomer->fk_vcenterID}}"/>
+                            <input class="form-control" name="vcenter_agregados[][visible]" id="{{$vcenterCustomer->fk_vcenterID}}" value="{{ $vcenterCustomer->vcenterData->vcenterAlias }}" disabled>
+                            <button class="btn btn-sm btn-danger ml-2" onclick="eliminarVcenter('{{ $vcenterCustomer->fk_vcenterID }}')">Eliminar</button>
+                        </div>
+                    @endforeach
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-sm btn-danger">
                         <i class="fa fa-save"></i> Guardar
                     </button>
                 </div>
-                </td>
             </div>
-            </table>
+        </div>
     </form>
 
-
-    <table id="example1" class="table table-striped table-bordered">
-        <thead>
-            <div class="card card-default">
-                <div class="card-header with-border" style="background: #dfe1e4;">
-                    <h3 class="card-title">Listado de Vcenter</h3>
-                </div>
-                <div class="card-body">
-                    <div class="row justify-content-end">
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <div class="input-group input-group-lg">
-                                    <input type="text" id="searchInput" class="form-control form-control-lg"
-                                        placeholder="Buscar por Alias">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                    </div>
-                                </div>
+    <div class="card card-default">
+        <div class="card-header with-border" style="background: #dfe1e4;">
+            <h3 class="card-title">Listado de Vcenter</h3>
+        </div>
+        <div class="card-body">
+            <div class="row justify-content-end">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <div class="input-group input-group-lg">
+                            <input type="text" id="searchInput" class="form-control form-control-lg" placeholder="Buscar por Alias">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
+    <table id="example1" class="table table-striped table-bordered">
+        <thead>
             <tr>
                 <th>ID</th>
                 <th>Alias</th>
@@ -113,16 +107,19 @@
                     <td>{{ $vcenter->roles->rolesAlias }}</td>
                     <td>{{ $vcenter->vcenterVersion }}</td>
                     <td>{{ $vcenter->Acciones }}
-                        <a href="#" <button class="btn btn-sm btn-default"
-                            onclick="agregarInformacion('{{ $vcenter->vcenterID }}', '{{ $vcenter->vcenterAlias }}')">
+                        <a href="#" class="btn btn-sm btn-default" onclick="agregarInformacion('{{ $vcenter->vcenterID }}', '{{ $vcenter->vcenterAlias }}')">
                             <i class="fa fa-plus" style="color: red"></i>
-                            </button>
-
+                        </a>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
+    <div class="d-flex justify-content-center">
+        {{ $Vcenter->links() }}
+    </div>
+
     <script>
         function filterTable() {
             var input, filter, table, tr, td, i, txtValue;
@@ -145,6 +142,7 @@
         }
 
         document.getElementById("searchInput").addEventListener("keyup", filterTable);
+
         // Obtener el campo de entrada del nombre del cliente por su ID
         var customerNameInput = document.getElementById('customerName');
 
@@ -172,139 +170,96 @@
 
             // Actualizar el valor del campo de entrada
             this.value = value;
+        });
 
-            $(document).ready(function() {
-                $('#formfield').keypress(function(e) {
-                    if (e.which == 13) {
-                        return false;
+        $(document).ready(function() {
+            createTable();
+        });
+
+        function createTable() {
+            $('#example1').dataTable({
+                "language": {
+                    "sProcessing": "Procesando...",
+                    "sLengthMenu": "Mostrar MENU registros",
+                    "sZeroRecords": "No se encontraron resultados",
+                    "sEmptyTable": "Ningún dato disponible en esta tabla",
+                    "sInfo": "Mostrando registros del START al END de un total de TOTAL registros",
+                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered": "(filtrado de un total de MAX registros)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Buscar:",
+                    "sUrl": "",
+                    "sInfoThousands": ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst": "Primero",
+                        "sLast": "Último",
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
                     }
-                });
-                $('#sendForm').on('click', function() {
-                    swal({
-                        title: "¿Esta seguro?",
-                        text: "Esta completamente seguro de ejecutar la tarea con los parametros seleccionados",
-                        icon: "warning",
-                        buttons: true,
-                        dangerMode: true,
-                        buttons: ["Cancelar", "Si, estoy seguro"],
-                    }).then((seguro) => {
-                        if (seguro) {
-                            if ($('#formfield')[0].checkValidity()) {
-                                $('#formfield').submit();
-                            } else {
-                                $('#formfield')[0].reportValidity();
-                            }
-                        }
-                    });
-                });
-                $('#vHost').select2({
-                    maximumSelectionLength: 10
-                });
-
-
+                },
+                "scrollX": true,
             });
+        }
 
-            $(document).on("click", ".Vlink", function(e) {
-                selectedItem = '<option value="' + $(this).data('id') + ',' + $(this).data(
-                        'vcenter') +
-                    '" selected>' + $(this).data('name') + '</option>';
-                if ($('#vHost :selected').length <= 9) {
-                    var an = $(this).data('id') + ',' + $(this).data('vcenter');
-                    if ($("#vHost option:selected").length >= 1) {
-                        var found = false;
-                        $("#vHost option:selected").each(function() {
-                            if ($(this).val() == an) {
-                                found = true
-                            }
-                        });
-                        if (!found) {
-                            $("#vHost").append(selectedItem);
-                        }
-                    } else {
-                        $("#vHost").append(selectedItem);
-                    }
+        function agregarInformacion(id, alias) {
+            // Verificar si el vCenter ya está presente
+            var vcenterContainer = document.getElementById('vcenter-container');
+            var alreadyAdded = false;
 
+            vcenterContainer.querySelectorAll('input[name="vcenter_agregados[][id]"]').forEach(function(input) {
+                if (input.value === id) {
+                    alreadyAdded = true;
                 }
             });
 
-            function createTable() {
-                $('#example1').dataTable({
-                    "language": {
-                        "sProcessing": "Procesando...",
-                        "sLengthMenu": "Mostrar MENU registros",
-                        "sZeroRecords": "No se encontraron resultados",
-                        "sEmptyTable": "Ningún dato disponible en esta tabla",
-                        "sInfo": "Mostrando registros del START al END de un total de TOTAL registros",
-                        "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-                        "sInfoFiltered": "(filtrado de un total de MAX registros)",
-                        "sInfoPostFix": "",
-                        "sSearch": "Buscar:",
-                        "sUrl": "",
-                        "sInfoThousands": ",",
-                        "sLoadingRecords": "Cargando...",
-                        "oPaginate": {
-                            "sFirst": "Primero",
-                            "sLast": "Último",
-                            "sNext": "Siguiente",
-                            "sPrevious": "Anterior"
-                        },
-                        "oAria": {
-                            "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                        }
-                    },
-                    "scrollX": true,
-                });
+            if (alreadyAdded) {
+                alert("¡Este vCenter ya ha sido agregado!");
+                return;
             }
 
+            // Si no está presente, agregarlo
+            var nuevoCriterioDiv = document.createElement('div');
+            nuevoCriterioDiv.classList.add('input-group');
 
-        });
+            var nuevoCriterioHidden = document.createElement('input');
+            nuevoCriterioHidden.name = 'vcenter_agregados[][id]';
+            nuevoCriterioHidden.type = 'hidden';
+            nuevoCriterioHidden.value = id;
 
-        function agregarInformacion(id, alias) {
-        // Verificar si el vCenter ya está presente
-        var vcenterContainer = document.getElementById('vcenter-container');
-        var alreadyAdded = false;
+            var nuevoCriterio = document.createElement('input');
+            nuevoCriterio.name = 'vcenter_agregados[][visible]';
+            nuevoCriterio.classList.add('form-control');
+            nuevoCriterio.rows = 1;
+            nuevoCriterio.value = alias;
+            nuevoCriterio.id = id;
+            nuevoCriterio.disabled = true;
 
-        vcenterContainer.querySelectorAll('input[name="vcenter_agregados[][id]"]').forEach(function(input) {
-            if (input.value === id) {
-                alreadyAdded = true;
-            }
-        });
+            var eliminarCriterioBtn = document.createElement('button');
+            eliminarCriterioBtn.type = 'button';
+            eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
+            eliminarCriterioBtn.textContent = 'Eliminar';
+            eliminarCriterioBtn.addEventListener('click', function() {
+                // Remover el div contenedor del botón eliminar
+                this.parentNode.parentNode.removeChild(this.parentNode);
+            });
 
-        if (alreadyAdded) {
-            alert("¡Este vCenter ya ha sido agregado!");
-            return;
+            nuevoCriterioDiv.appendChild(nuevoCriterioHidden);
+            nuevoCriterioDiv.appendChild(nuevoCriterio);
+            nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
+            vcenterContainer.appendChild(nuevoCriterioDiv);
         }
 
-        // Si no está presente, agregarlo
-        var nuevoCriterioDiv = document.createElement('div');
-        nuevoCriterioDiv.classList.add('input-group');
-
-        var nuevoCriterioHidden = document.createElement('input');
-        nuevoCriterioHidden.name = 'vcenter_agregados[][id]';
-        nuevoCriterioHidden.type = 'hidden';
-        nuevoCriterioHidden.value = id;
-
-        var nuevoCriterio = document.createElement('input');
-        nuevoCriterio.name = 'vcenter_agregados[][visible]';
-        nuevoCriterio.classList.add('form-control');
-        nuevoCriterio.rows = 1;
-        nuevoCriterio.value = alias;
-        nuevoCriterio.id = id;
-        nuevoCriterio.disabled = true;
-
-        var eliminarCriterioBtn = document.createElement('button');
-        eliminarCriterioBtn.type = 'button';
-        eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
-        eliminarCriterioBtn.textContent = 'Eliminar';
-        eliminarCriterioBtn.addEventListener('click', function() {
-            vcenterContainer.removeChild(nuevoCriterioDiv);
-        });
-
-        nuevoCriterioDiv.appendChild(nuevoCriterioHidden);
-        nuevoCriterioDiv.appendChild(nuevoCriterio);
-        nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
-        vcenterContainer.appendChild(nuevoCriterioDiv);
-    }
-</script>
+        function eliminarVcenter(id) {
+            // Eliminar el div contenedor del vcenter
+            var divToRemove = document.getElementById(id).parentNode;
+            divToRemove.parentNode.removeChild(divToRemove);
+        }
+    </script>
 @stop
+
+
