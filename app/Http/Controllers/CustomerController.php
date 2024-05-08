@@ -172,7 +172,7 @@ class CustomerController extends Controller
     public function guardarInformacion(Request $request, $customerID)
 {
     $vcenter_agregados = $request->input('vcenter_agregados');
-    
+
     // Obtener los IDs de los vCenters agregados
     $vcenter_ids = array_column($vcenter_agregados, 'id');
 
@@ -184,9 +184,13 @@ class CustomerController extends Controller
     // Eliminar los vCenters que ya no están en la lista de vCenter agregados
     $vcenters_a_eliminar = array_diff($existing_vcenter_ids, $vcenter_ids);
     if (!empty($vcenters_a_eliminar)) {
+        // Agregar esta parte para eliminar los vCenters de la tabla customer_vcenter
         customer_vcenter::where('fk_customerID', $customerID)
             ->whereIn('fk_vcenterID', $vcenters_a_eliminar)
             ->delete();
+    } else {
+        // Si no hay vCenters para eliminar, eliminar todos los vCenters asociados al cliente
+        customer_vcenter::where('fk_customerID', $customerID)->delete();
     }
 
     // Agregar los vCenters que no estén ya asociados al cliente
@@ -204,5 +208,6 @@ class CustomerController extends Controller
         'Se ha completado la segregación del id ' . $customerID . ' ejecutado por '  . auth()->user()->name
     );
 }
+
 
 }
