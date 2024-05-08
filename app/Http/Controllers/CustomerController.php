@@ -136,7 +136,7 @@ class CustomerController extends Controller
 
      public function show(Request $request, $customerID)
      {
-         $Vcenter = vcenter::paginate(10); // Obtener vcenters paginados
+         $Vcenter = vcenter::get(); 
      
          foreach ($Vcenter as $vcenter) {
              $segment = Segment::find($vcenter->fk_segmentID);
