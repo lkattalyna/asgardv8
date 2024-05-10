@@ -8,11 +8,12 @@ use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\customer_vcenter;
-use App\Models\Customer; 
+use App\Models\Customer;
 use App\Models\vcenter;
 use App\Segment;
 use App\Models\roles;
 use Illuminate\Http\RedirectResponse;
+use App\Cluster;
 
 
 
@@ -26,7 +27,7 @@ class CustomerController extends Controller
     public function index()
     {
         $datos['Customer'] = Customer::get();
-       // Log::info($datos);
+        // Log::info($datos);
 
         return view('customer.index', $datos);
     }
@@ -55,24 +56,24 @@ class CustomerController extends Controller
             'customerNIT' => 'required|string|max:255',
             'customerState' => 'required|string|max:255',
         ]);
-    
+
         // Verificar si el NIT ya existe
         $existingCustomer = Customer::where('customerNIT', $request->customerNIT)->exists();
-    
+
         if ($existingCustomer) {
             return redirect()->back()->withInput()->withErrors(['customerNIT' => 'El NIT ingresado ya existe en nuestros registros.']);
         }
-    
+
         // Si el NIT no existe, proceder con el guardado del cliente
         $customer = new Customer();
         $customer->customerName = $request->customerName;
         $customer->customerNIT = $request->customerNIT;
         $customer->customerState = $request->customerState;
         $customer->save();
-    
+
         // Obtener el ID del cliente recién creado
         $customerID = $customer->customerID;
-    
+
         // Redireccionar a alguna página después de guardar el cliente
         return redirect()->route('customer.index')->with('success', 'Cliente registrado exitosamente. ID del cliente: ' . $customerID);
     }
@@ -107,7 +108,7 @@ class CustomerController extends Controller
 
         return redirect()->route('customer.index')->with(
             'success',
-            'Cliente con id ' . $customerID . ' actualizado correctamente por '  . auth()->user()->name
+            'Cliente con id ' . $customerID . ' actualizado correctamente por ' . auth()->user()->name
         );
     }
 
@@ -119,7 +120,7 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-       // Log::info($id);
+        // Log::info($id);
         $customer = Customer::where('customerID', $id)->delete();
 
         return redirect()->back()->with(
@@ -134,26 +135,26 @@ class CustomerController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     public function show(Request $request, $customerID)
-     {
-         $Vcenter = vcenter::get(); 
-     
-         foreach ($Vcenter as $vcenter) {
-             $segment = Segment::find($vcenter->fk_segmentID);
-             $roles = roles::find($vcenter->rolesID);
-             $vcenter->segment = $segment;
-             $vcenter->roles = $roles;
-         }
-         
-         $CustomerVcenters = customer_vcenter::where('fk_customerID', $customerID)->get();
-         
-         foreach ($CustomerVcenters as $vcenter) {
-             $vcenterData = vcenter::where('vcenterID', $vcenter->fk_vcenterID)->firstOrFail();
-             $vcenter->vcenterData = $vcenterData;
-         }
-     
-         return view('customer.show', compact('Vcenter', 'customerID', 'CustomerVcenters'));
-     }
+    public function show(Request $request, $customerID)
+    {
+        $Vcenter = vcenter::get();
+
+        foreach ($Vcenter as $vcenter) {
+            $segment = Segment::find($vcenter->fk_segmentID);
+            $roles = roles::find($vcenter->rolesID);
+            $vcenter->segment = $segment;
+            $vcenter->roles = $roles;
+        }
+
+        $CustomerVcenters = customer_vcenter::where('fk_customerID', $customerID)->get();
+
+        foreach ($CustomerVcenters as $vcenter) {
+            $vcenterData = vcenter::where('vcenterID', $vcenter->fk_vcenterID)->firstOrFail();
+            $vcenter->vcenterData = $vcenterData;
+        }
+
+        return view('customer.show', compact('Vcenter', 'customerID', 'CustomerVcenters'));
+    }
     public function checkNit(Request $request)
     {
         $nit = $request->input('nit');
@@ -171,40 +172,56 @@ class CustomerController extends Controller
      */
     public function guardarInformacion(Request $request, $customerID)
     {
-    $vcenter_agregados = $request->input('vcenter_agregados');
+        $vcenter_agregados = $request->input('vcenter_agregados');
 
-    // Obtener los IDs de los vCenters agregados
-    $vcenter_ids = array_column($vcenter_agregados, 'id');
+        // Obtener los IDs de los vCenters agregados
+        $vcenter_ids = array_column($vcenter_agregados, 'id');
 
-    // Obtener los IDs de los vCenters asociados al cliente actual
-    $existing_vcenter_ids = customer_vcenter::where('fk_customerID', $customerID)
-        ->pluck('fk_vcenterID')
-        ->toArray();
+        // Obtener los IDs de los vCenters asociados al cliente actual
+        $existing_vcenter_ids = customer_vcenter::where('fk_customerID', $customerID)
+            ->pluck('fk_vcenterID')
+            ->toArray();
 
-    // Eliminar los vCenters que ya no están en la lista de vCenter agregados
-    $vcenters_a_eliminar = array_diff($existing_vcenter_ids, $vcenter_ids);
-    if (!empty($vcenters_a_eliminar)) {
-        // Agregar esta parte para eliminar los vCenters de la tabla customer_vcenter
-        customer_vcenter::where('fk_customerID', $customerID)
-            ->whereIn('fk_vcenterID', $vcenters_a_eliminar)
-            ->delete();
-    } 
-
-    // Agregar los vCenters que no estén ya asociados al cliente
-    foreach ($vcenter_agregados as $vcenter) {
-        if (!in_array($vcenter['id'], $existing_vcenter_ids)) {
-            customer_vcenter::create([
-                'fk_customerID' => $customerID,
-                'fk_vcenterID' => $vcenter['id']
-            ]);
+        // Eliminar los vCenters que ya no están en la lista de vCenter agregados
+        $vcenters_a_eliminar = array_diff($existing_vcenter_ids, $vcenter_ids);
+        if (!empty($vcenters_a_eliminar)) {
+            // Agregar esta parte para eliminar los vCenters de la tabla customer_vcenter
+            customer_vcenter::where('fk_customerID', $customerID)
+                ->whereIn('fk_vcenterID', $vcenters_a_eliminar)
+                ->delete();
         }
+
+        // Agregar los vCenters que no estén ya asociados al cliente
+        foreach ($vcenter_agregados as $vcenter) {
+            if (!in_array($vcenter['id'], $existing_vcenter_ids)) {
+                customer_vcenter::create([
+                    'fk_customerID' => $customerID,
+                    'fk_vcenterID' => $vcenter['id']
+                ]);
+            }
+        }
+
+        return redirect()->route('customer.index')->with(
+            'success',
+            'Se ha completado la segregación del id ' . $customerID . ' ejecutado por ' . auth()->user()->name
+        );
     }
+    /**
+     * Show the form for editing the specified resource.
+     *0
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
 
-    return redirect()->route('customer.index')->with(
-        'success',
-        'Se ha completado la segregación del id ' . $customerID . ' ejecutado por '  . auth()->user()->name
-    );
+    public function customerCluster(Request $request, $customerID)
+{
+    // Obtener todos los clústeres
+    $clusters = Cluster::get();
+
+    // Obtener solo los vcenterIp necesarios
+    $vcenterIp = Vcenter::pluck('vcenterIp');
+
+    return view('customer.customerCluster', compact('clusters', 'vcenterIp', 'customerID'));
 }
-
 
 }

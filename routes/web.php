@@ -1016,7 +1016,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/checkNit', 'CustomerController@checkNit')->name('checkNit');
     Route::post('customer/guardarInformacion/{customerID}', 'CustomerController@guardarInformacion')->name('customer.guardarInformacion');
     Route::delete('/customer/vcenter/{id}', 'CustomerController@eliminarVcenter')->name('customer.eliminarVcenter');
-
+    Route::get('customer/customerCluster/{customerID}', 'CustomerController@customerCluster')->name('customer.customerCluster');
+    Route::post('customer/guardarInformacion/{customerID}', 'CustomerController@guardarInformacion')->name('customer.guardarInformacion');
 
 
     //link boton add 

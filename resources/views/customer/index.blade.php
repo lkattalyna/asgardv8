@@ -59,6 +59,11 @@
                                 <i class="fa fa-tasks" style="color: #0d6aad"></i>
                             </button>
                         </a>
+                        <a href="{{ route('customer.customerCluster', $customer->customerID) }}" title="Segregar por cluster">
+                            <button class="btn btn-sm btn-default">
+                                <i class="fa fa-users" style="color: #0d6aad"></i>
+                            </button>
+                        </a>
                     </td>
                     <td class="center">
                         <a href="{{ route('customer.edit', $customer->customerID) }}" class="btn btn-sm btn-default"
