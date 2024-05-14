@@ -1018,6 +1018,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('/customer/vcenter/{id}', 'CustomerController@eliminarVcenter')->name('customer.eliminarVcenter');
     Route::get('customer/customerCluster/{customerID}', 'CustomerController@customerCluster')->name('customer.customerCluster');
     Route::post('customer/guardarInformacion/{customerID}', 'CustomerController@guardarInformacion')->name('customer.guardarInformacion');
+    Route::match(['get', 'post'], 'customer/customerCluster/{customerID}', 'CustomerController@customerCluster')->name('customer.customerCluster');
+
 
 
     //link boton add 

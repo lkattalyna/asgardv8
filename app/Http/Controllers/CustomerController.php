@@ -212,16 +212,43 @@ class CustomerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-
     public function customerCluster(Request $request, $customerID)
+    {
+        // Obtener los clústeres asociados al cliente
+        $customer = Customer::findOrFail($customerID); // Ajusta el modelo de cliente según tu aplicación
+        $customerClusters = $customer->clusters ?? collect(); // Si $customer->clusters es null, se asigna una colección vacía
+    
+        // Obtener todos los clústeres
+        $clusters = Cluster::all() ?? collect(); // Si Cluster::all() es null, se asigna una colección vacía
+    
+        // Filtrar los clústeres disponibles
+        $clustersDisponibles = $clusters->diff($customerClusters);
+    
+        // Obtener solo los vCenter necesarios
+        $vcenterIp = Vcenter::pluck('vcenterIp')->all() ?? []; // Ajusta el modelo y el atributo según tu aplicación
+    
+        return view('customer.customerCluster', compact('clustersDisponibles', 'customerClusters', 'customerID', 'vcenterIp', 'clusters'));
+    }
+    
+    public function saveClusters(Request $request, $customerID)
 {
-    // Obtener todos los clústeres
-    $clusters = Cluster::get();
+    // Validar los datos del formulario, si es necesario
+    $request->validate([
+        'cluster_agregados' => 'required|array',
+        'cluster_agregados.*.id' => 'required|exists:clusters,id',
+        // Puedes agregar más reglas de validación si es necesario
+    ]);
 
-    // Obtener solo los vcenterIp necesarios
-    $vcenterIp = Vcenter::pluck('vcenterIp');
+    // Obtener los datos del formulario
+    $clusters = $request->input('cluster_agregados');
 
-    return view('customer.customerCluster', compact('clusters', 'vcenterIp', 'customerID'));
+    // Actualizar los clusters asociados al cliente
+    $customer = Customer::findOrFail($customerID);
+    $customer->clusters()->sync($clusters);
+
+    // Redireccionar a una página de éxito o a donde sea necesario
+    return redirect()->route('customer.index')->with('success', 'Los clusters han sido guardados correctamente.');
 }
+     
 
 }

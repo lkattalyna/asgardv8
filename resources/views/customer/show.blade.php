@@ -20,9 +20,7 @@
 @include('layouts.formError')
 <div class="card card-default">
     <div class="card-body">
-        <form id="formulario_segregacion" method="POST"
-            action="{{ route('customer.guardarInformacion', ['customerID' => $customerID]) }}"
-            enctype="multipart/form-data">
+    <form id="formulario_cluster" method="POST" action="{{ route('customer.saveClusters', ['customerID' => $customerID]) }}" enctype="multipart/form-data">
             @csrf
             @method('POST')
             {{ csrf_field() }}
