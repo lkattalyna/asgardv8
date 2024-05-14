@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class customer_vcenter extends Model
+class customer_cluster extends Model
 {
     //use HasFactory;
 
-    protected $table = 'central.customer_vcenter';
+    protected $table = 'central.customer_cluster';
 
     protected $primaryKey = 'customerclusterID';
     
