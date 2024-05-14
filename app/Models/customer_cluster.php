@@ -18,6 +18,8 @@ class customer_cluster extends Model
     [
         'fk_customerID',
         'fk_clusterID',
+        'updated_at', 
+        'created_at'
         
     ];
 }

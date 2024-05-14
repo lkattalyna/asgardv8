@@ -245,21 +245,7 @@ class CustomerController extends Controller
     }
     
     public function saveClusters(Request $request, $customerID)
-// {
-//     // Validar los datos del formulario, si es necesario
-//     $request->validate([
-//         'cluster_agregados' => 'required|array',
-//         'cluster_agregados.*.id' => 'required|exists:clusters,id',
-//         // Puedes agregar más reglas de validación si es necesario
-//     ]);
-
-//     // Obtener los datos del formulario
-//     $clusters = $request->input('cluster_agregados');
-
-//     // Actualizar los clusters asociados al cliente
-//     $customer = Customer::findOrFail($customerID);
-//     $customer->clusters()->sync($clusters);
-
+ {
 
 $cluster_agregados = $request->input('cluster_agregados');
 
@@ -289,9 +275,11 @@ foreach ($cluster_agregados as $cluster) {
         ]);
     }
 }
-
-    // Redireccionar a una página de éxito o a donde sea necesario
-    return redirect()->route('customer.index')->with('success', 'Los clusters han sido guardados correctamente.');
+return redirect()->route('customer.index')->with(
+    'success',
+    'Los clusters han sido guardados correctamente ' . $customerID . ' ejecutado por ' . auth()->user()->name
+);
+    
 }
      
 
