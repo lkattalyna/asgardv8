@@ -217,70 +217,68 @@ class CustomerController extends Controller
     public function customerCluster(Request $request, $customerID)
     {
         // Obtener los clústeres asociados al cliente
-        //$customer = Customer::findOrFail($customerID); 
-        $customerClusters = customer_cluster::find($customerID) ?? Collect(); // Si $customer->clusters es null, se asigna una colección vacía
-    
+        $customerClusters = customer_cluster::where('fk_customerID', $customerID)->get(); // Si $customer->clusters es null, se asigna una colección vacía
+
+        foreach ($customerClusters as $cluster) {
+            $clusterData = Cluster::where('clusterID', $cluster->fk_clusterID)->first();
+            $cluster->clusterData = $clusterData;
+        }
+
         // Obtener todos los clústeres
         $clusters = Cluster::all() ?? collect();
 
         foreach ($clusters as $cluster) {
             $datacenter = Datacenter::find($cluster->fk_datacenterID);
-            $cluster->datacenter = $datacenter;        
-            
-            $vcenter = Vcenter::find($cluster->datacenter->fk_vcenterID);
-            
+            $cluster->datacenter = $datacenter;
 
+            $vcenter = Vcenter::find($cluster->datacenter->fk_vcenterID);
             $cluster->datacenter->vcenter = $vcenter;
         }
+
         //Log::info($clusters);
 
-        // Filtrar los clústeres disponibles
-        //$clustersDisponibles = $clusters->diff($customerClusters);
-    
-        // Obtener solo los vCenter necesarios
-        //$vcenterIps = Vcenter::pluck('vcenterIp')->all();
- 
-    
+
         return view('customer.customerCluster', compact('customerID', 'clusters', 'customerClusters'));
     }
-    
+
     public function saveClusters(Request $request, $customerID)
- {
+    {
 
-$cluster_agregados = $request->input('cluster_agregados');
+        $cluster_agregados = $request->input('cluster_agregados');
 
-// Obtener los IDs de los clusters agregados
-$cluster_ids = array_column($cluster_agregados, 'id');
+        // Obtener los IDs de los clusters agregados
+        $cluster_ids = array_column($cluster_agregados, 'id');
+        
 
-// Obtener los IDs de los clusters asociados al cliente actual
-$existing_cluster_ids = customer_cluster::where('fk_customerID', $customerID)
-    ->pluck('fk_clusterID')
-    ->toArray();
+        // Obtener los IDs de los clusters asociados al cliente actual
+        $existing_cluster_ids = customer_cluster::where('fk_customerID', $customerID)
+            ->pluck('fk_clusterID')
+            ->toArray();
 
-// Eliminar los cluster que ya no están en la lista de cluster agregados
-$cluster_a_eliminar = array_diff($existing_cluster_ids, $cluster_ids);
-if (!empty($clusters_a_eliminar)) {
-    // Agregar esta parte para eliminar los clusters de la tabla customer_cluster
-    customer_cluster::where('fk_customerID', $customerID)
-        ->whereIn('fk_clusterID', $clusters_a_eliminar)
-        ->delete();
-}
+        // Eliminar los cluster que ya no están en la lista de cluster agregados
+        $clusters_a_eliminar = array_diff($existing_cluster_ids, $cluster_ids);
+        if (!empty($clusters_a_eliminar)) {
+            //eliminar los clusters de la tabla customer_cluster
+            customer_cluster::where('fk_customerID', $customerID)
+                ->whereIn('fk_clusterID', $clusters_a_eliminar)
+                ->delete();
+        }
 
-// Agregar los vCenters que no estén ya asociados al cliente
-foreach ($cluster_agregados as $cluster) {
-    if (!in_array($cluster['id'], $existing_cluster_ids)) {
-        customer_cluster::create([
-            'fk_customerID' => $customerID,
-            'fk_clusterID' => $cluster['id']
-        ]);
+        // Agregar los vCenters que no estén ya asociados al cliente
+        foreach ($cluster_agregados as $cluster) {
+            if (!in_array($cluster['id'], $existing_cluster_ids)) {
+                customer_cluster::create([
+                    'fk_customerID' => $customerID,
+                    'fk_clusterID' => $cluster['id']
+                ]);
+            }
+        }
+        return redirect()->route('customer.index')->with(
+            'success',
+            'Los clusters han sido guardados correctamente ' . $customerID . ' ejecutado por ' . auth()->user()->name
+        );
+
     }
-}
-return redirect()->route('customer.index')->with(
-    'success',
-    'Los clusters han sido guardados correctamente ' . $customerID . ' ejecutado por ' . auth()->user()->name
-);
-    
-}
-     
+
 
 }
