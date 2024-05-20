@@ -248,7 +248,7 @@ class CustomerController extends Controller
 
         // Obtener los IDs de los clusters agregados
         $cluster_ids = array_column($cluster_agregados, 'id');
-        
+
 
         // Obtener los IDs de los clusters asociados al cliente actual
         $existing_cluster_ids = customer_cluster::where('fk_customerID', $customerID)
@@ -277,8 +277,16 @@ class CustomerController extends Controller
             'success',
             'Los clusters han sido guardados correctamente ' . $customerID . ' ejecutado por ' . auth()->user()->name
         );
-
     }
 
+    public function customerDictionary($customerID)
+    {
+        // Lógica para manejar la segregación por diccionario
+        $customer = Customer::findOrFail($customerID);
 
+        // Aquí puedes agregar la lógica específica para la segregación por diccionario
+        // Por ejemplo, obtener datos necesarios, realizar cálculos, etc.
+
+        return view('customer.customerDictionary', compact('customer'));
+    }
 }
