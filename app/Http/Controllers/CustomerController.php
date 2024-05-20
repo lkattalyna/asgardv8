@@ -281,12 +281,19 @@ class CustomerController extends Controller
 
     public function customerDictionary($customerID)
     {
-        // Lógica para manejar la segregación por diccionario
+        // Encuentra el cliente por ID
         $customer = Customer::findOrFail($customerID);
-
-        // Aquí puedes agregar la lógica específica para la segregación por diccionario
-        // Por ejemplo, obtener datos necesarios, realizar cálculos, etc.
-
-        return view('customer.customerDictionary', compact('customer'));
+    
+        // Obtener los clústeres asociados al cliente
+        $customerClusters = customer_cluster::where('fk_customerID', $customerID)->get();
+    
+        foreach ($customerClusters as $cluster) {
+            $clusterData = Cluster::where('clusterID', $cluster->fk_clusterID)->first();
+            $cluster->clusterData = $clusterData;
+        }
+    
+        // Retorna la vista con el cliente y los clusters
+        return view('customer.customerDictionary', compact('customer', 'customerClusters'));
     }
+    
 }
