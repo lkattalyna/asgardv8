@@ -17,7 +17,8 @@ class customer_vcenter extends Model
     protected $fillable = 
     [
         'fk_customerID',
-        'fk_clusterID',
-        
+        'fk_vcenterID',
+        'updated_at', 
+        'created_at'
     ];
 }
