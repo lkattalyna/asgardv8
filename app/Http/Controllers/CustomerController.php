@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\VirtualHost;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response;
@@ -13,9 +14,13 @@ use App\Models\vcenter;
 use App\Segment;
 use App\Models\roles;
 use App\Models\customer_cluster;
+use App\Models\customer_dictionary;
 use App\Datacenter;
 use Illuminate\Http\RedirectResponse;
 use App\Cluster;
+use App\Vm;
+use App\VmHost;
+use Illuminate\Support\Facades\Facades;
 
 
 
@@ -279,21 +284,84 @@ class CustomerController extends Controller
         );
     }
 
-    public function customerDictionary($customerID)
+    public function customerDictionary(Request $request, $customerID)
     {
-        // Encuentra el cliente por ID
-        $customer = Customer::findOrFail($customerID);
-    
-        // Obtener los clústeres asociados al cliente
-        $customerClusters = customer_cluster::where('fk_customerID', $customerID)->get();
-    
-        foreach ($customerClusters as $cluster) {
-            $clusterData = Cluster::where('clusterID', $cluster->fk_clusterID)->first();
-            $cluster->clusterData = $clusterData;
-        }
+        $customerVcenter = customer_vcenter::where('fk_customerID', $customerID)->firstOrFail();
+        Log::Info($customerVcenter);
+
+        $Vcenter = vcenter::where('vcenterID', $customerVcenter->fk_vcenterID)->firstOrFail();
+        Log::Info($Vcenter);
+
+        $datacenter = datacenter::where('fk_vcenterID', $Vcenter->vcenterID)->firstOrFail();
+        Log::Info($datacenter);
+
+        $cluster = cluster::where('fk_datacenterID', $datacenter->datacenterID)->firstOrFail();
+        Log::Info($cluster);
+
+        $vmhost = VmHost::where('fk_clusterID', $cluster->clusterID)->firstOrFail();
+        Log::Info($vmhost);
+
+        $vm = Vm::where('fk_vmhostID', $vmhost->vmhostID)->firstOrFail();
+        Log::Info($vm);
+
+        // Obtener los asociados al cliente
+        $virtualMachines = Vm::get();
+        
+        $customerDictionaries = customer_dictionary::where('fk_customerID', $customerID)->get();
+        //foreach ($virtualMachines as $virtalMachine) {
+        //    $vms = Vm::where('clusterID', $Value->fk_clusterID)->first();
+        //    $Value->vms = $vms;
+        //}
+
+ // Obtener todos los clústeres
+        //$value = Vm::all() ?? collect();
+
+        //foreach ($value as $tfm) {
+        //    $hosts = VirtualHost::find($tfm->fk_datacenterID);
+        //    $tfm->hosts = $hosts;
+
+            // $vcenter = Vcenter::find($tfm->datacenter->fk_vcenterID);
+            // $tfm->datacenter->vcenter = $vcenter;
+        //}
     
         // Retorna la vista con el cliente y los clusters
-        return view('customer.customerDictionary', compact('customer', 'customerClusters'));
+        return view('customer.customerDictionary', compact('customerID','virtualMachines','customerDictionaries'));
     }
     
+    public function saveCustomerDictionay(Request $request, $customerID)
+    {
+        //$valores_agregados = $request->input('valores_agregados');
+
+        // Obtener los IDs de los valores agregados
+         //$valor_ids = array_column($valores_agregados, 'id');
+
+
+        // Obtener los IDs de los clusters asociados al cliente actual
+        // $existing_cluster_ids = customer_cluster::where('fk_customerID', $customerID)
+        //     ->pluck('fk_clusterID')
+        //     ->toArray();
+
+        // Eliminar los cluster que ya no están en la lista de cluster agregados
+        // $clusters_a_eliminar = array_diff($existing_cluster_ids, $cluster_ids);
+        // if (!empty($clusters_a_eliminar)) {
+        //     //eliminar los clusters de la tabla customer_cluster
+        //     customer_cluster::where('fk_customerID', $customerID)
+        //         ->whereIn('fk_clusterID', $clusters_a_eliminar)
+        //         ->delete();
+        // }
+
+        // Agregar los vCenters que no estén ya asociados al cliente
+        // foreach ($cluster_agregados as $cluster) {
+        //     if (!in_array($cluster['id'], $existing_cluster_ids)) {
+        //         customer_cluster::create([
+        //             'fk_customerID' => $customerID,
+        //             'fk_clusterID' => $cluster['id']
+        //         ]);
+        //     }
+        // }
+        return redirect()->route('customer.index')->with(
+            'success',
+            'Los clusters han sido guardados correctamente ' . $customerID . ' ejecutado por ' . auth()->user()->name
+        );
+    }
 }
