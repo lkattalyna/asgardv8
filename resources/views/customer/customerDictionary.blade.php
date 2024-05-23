@@ -21,7 +21,7 @@
     <div class="card card-default">
         <div class="card-body">
             <form id="formulario_Dictionary" method="POST"
-                action="{{ route('customer.saveCustomerDictionay', ['customerID' => $customerID]) }}"
+                action="{{ route('customer.saveCustomerDictionary', ['customerID' => $customerID]) }}"
                 enctype="multipart/form-data">
                 @csrf
                 @method('POST')
@@ -35,11 +35,11 @@
                         <td>
                             <label for="guardarValor" class="col-form-label">{{ _('VALORES AGREGADOS') }}</label>
                         </td>
-                        <div id="cluster-container">
+                        <div id="Dictionary-container">
                             @if ($customerDictionaries === null || $customerDictionaries->isEmpty() || count($customerDictionaries) == 0)
                                 <p>No hay información de la consulta</p>
                             @else
-                                <!-- Clústeres agregados dinámicamente -->
+                                <!-- dinámicamente -->
                                 @foreach ($customerDictionaries as $customerDictionary)
                                     <div class="input-group">
                                         <input type="hidden" name="valores_agregados[][id]"
@@ -48,7 +48,7 @@
                                             id="{{ $customerDictionary->value }}" value="{{ $customerDictionary->value }}"
                                             disabled>
                                         <button class="btn btn-sm btn-danger ml-2"
-                                            onclick="eliminarValor('{{ $customerDictionary->fk_customerID }}')">Eliminar</button>
+                                            onclick="eliminarValor('{{ $customerDictionary->customerdictionaryID }}')">Eliminar</button>
                                     </div>
                                 @endforeach
                             @endif
@@ -90,7 +90,7 @@
                         </div>
 
                         <!-- Segundo input donde se mostrarán los elementos agregados -->
-                        <div id="cluster-container" style="margin-top: 10px;"></div>
+                        <div id="Dictionary-container" style="margin-top: 10px;"></div>
                     </td>
                 </tr>
             </table>
@@ -121,7 +121,7 @@
                             <td>{{ $virtualMachine->vmMemoryGB }}</td>
                             <th>{{ $virtualMachine->vmCpuCount }}</th>
                             <td>{{ $virtualMachine->clusterName }}</td>
-                            <td>{{ $virtualMachine->vmName }}</td>
+                            <td>{{ $virtualMachine->vcenterAlias }}</td>
 
                         </tr>
                     @empty
@@ -148,44 +148,51 @@
 @section('js')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('agregar').addEventListener('click', function() {
-            var service = document.getElementById('service').value.trim();
-            if (service) {
-                // Crear un nuevo div con la clase input-group
-                var newInputGroup = document.createElement('div');
-                newInputGroup.className = 'input-group mb-2';
+    document.getElementById('agregar').addEventListener('click', function() {
+        var service = document.getElementById('service').value.trim();
+        if (service) {
+            // Crear un nuevo div con la clase input-group
+            var newInputGroup = document.createElement('div');
+            newInputGroup.className = 'input-group mb-2';
 
-                // Crear el input visible, deshabilitado
-                var newInput = document.createElement('input');
-                newInput.setAttribute('type', 'text');
-                newInput.setAttribute('name', 'valores_agregados[]');
-                newInput.setAttribute('value', service);
-                newInput.setAttribute('class', 'form-control');
-                newInput.setAttribute('disabled', 'disabled');
+            // Crear el input visible, deshabilitado
+            var newInput = document.createElement('input');
+            newInput.setAttribute('type', 'text');
+            newInput.setAttribute('name', 'valores_agregados[]');
+            newInput.setAttribute('value', service);
+            newInput.setAttribute('class', 'form-control');
+            newInput.setAttribute('disabled', 'disabled');
 
-                // Crear el botón de eliminar
-                var deleteButton = document.createElement('button');
-                deleteButton.className = 'btn btn-sm btn-danger ml-2';
-                deleteButton.innerText = 'Eliminar';
-                deleteButton.type = 'button';
-                deleteButton.onclick = function() {
-                    eliminarValor(newInputGroup);
-                };
+            // Crear el campo de entrada oculto para almacenar el valor en la base de datos
+            var hiddenInput = document.createElement('input');
+            hiddenInput.setAttribute('type', 'hidden');
+            hiddenInput.setAttribute('name', 'valores_agregados_db[]'); // Nombre diferente para diferenciarlo
+            hiddenInput.setAttribute('value', service);
 
-                // Añadir los elementos al div
-                newInputGroup.appendChild(newInput);
-                newInputGroup.appendChild(deleteButton);
+            // Crear el botón de eliminar
+            var deleteButton = document.createElement('button');
+            deleteButton.className = 'btn btn-sm btn-danger ml-2';
+            deleteButton.innerText = 'Eliminar';
+            deleteButton.type = 'button';
+            deleteButton.onclick = function() {
+                eliminarValor(newInputGroup);
+            };
 
-                // Añadir el nuevo div al contenedor
-                document.getElementById('cluster-container').appendChild(newInputGroup);
+            // Añadir los elementos al div
+            newInputGroup.appendChild(newInput);
+            newInputGroup.appendChild(hiddenInput); // Agregar el campo oculto
+            newInputGroup.appendChild(deleteButton);
 
-                // Limpiar el input de búsqueda después de agregar
-                document.getElementById('service').value = '';
-            } else {
-                alert('Por favor, ingrese un valor para agregar.');
-            }
-        });
+            // Añadir el nuevo div al contenedor
+            document.getElementById('Dictionary-container').appendChild(newInputGroup);
+
+            // Limpiar el input de búsqueda después de agregar
+            document.getElementById('service').value = '';
+        } else {
+            alert('Por favor, ingrese un valor para agregar.');
+        }
     });
+});
 
     function eliminarValor(element) {
         element.remove();
@@ -315,10 +322,10 @@
 
     function agregarValor(id, alias) {
         // Verificar si el cluster ya está presente
-        var valoresContainer = document.getElementById('valores-container');
+        var Dictionarycontainer = document.getElementById('Dictionary-container');
         var alreadyAdded = false;
 
-        clusterContainer.querySelectorAll('input[name="valores_agregados[][id]"]').forEach(function(input) {
+        Dictionary-container.querySelectorAll('input[name="valores_agregados[][id]"]').forEach(function(input) {
             if (input.value === id) {
                 alreadyAdded = true;
             }
@@ -382,20 +389,23 @@
         eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
         eliminarCriterioBtn.textContent = 'Eliminar';
         eliminarCriterioBtn.addEventListener('click', function() {
-            // Remover el div contenedor del botón eliminar
-            this.parentNode.parentNode.removeChild(this.parentNode);
+            eliminarValor(event, id);
+          
         });
 
         nuevoCriterioDiv.appendChild(nuevoCriterioHidden);
         nuevoCriterioDiv.appendChild(nuevoCriterio);
         nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
-        clusterContainer.appendChild(nuevoCriterioDiv);
+        Dictionary-container.appendChild(nuevoCriterioDiv);
     }
 
-    function eliminarCluster(id) {
-        // Eliminar el div contenedor del cluster
-        var divToRemove = document.getElementById(id).parentNode;
-        divToRemove.parentNode.removeChild(divToRemove);
+    function eliminarValor(ievent, id) {
+        event.preventDefault();
+        if (confirm('¿Seguro que quiere eliminar este valor?')) {
+            // Eliminar el div contenedor del cluster
+            var divToRemove = document.getElementById(id).parentNode;
+            divToRemove.parentNode.removeChild(divToRemove);
+        }
     }
 </script>
 

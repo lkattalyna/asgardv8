@@ -1020,7 +1020,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('customer/guardarInformacion/{customerID}', 'CustomerController@guardarInformacion')->name('customer.guardarInformacion');
     Route::post('customer/saveClusters/{customerID}', 'CustomerController@saveClusters')->name('customer.saveClusters');
     Route::get('customer/customerDictionary/{customerID}', 'CustomerController@customerDictionary')->name('customer.customerDictionary');
-    Route::post('customer/saveCustomerDictionay/{customerID}', 'CustomerController@saveCustomerDictionay')->name('customer.saveCustomerDictionay');
+    Route::post('customer/saveCustomerDictionary/{customerID}', 'CustomerController@saveCustomerDictionary')->name('customer.saveCustomerDictionary');
 
 
 

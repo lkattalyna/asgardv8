@@ -345,7 +345,7 @@ class CustomerController extends Controller
         return view('customer.customerDictionary', compact('customerID','virtualMachines','customerDictionaries'));
     }
     
-    public function saveCustomerDictionay(Request $request, $customerID)
+    public function saveCustomerDictionary(Request $request, $customerID)
     {
         //$valores_agregados = $request->input('valores_agregados');
 
@@ -376,6 +376,29 @@ class CustomerController extends Controller
         //         ]);
         //     }
         // }
+
+        // Valida los datos recibidos del formulario
+        $request->validate([
+            'valores_agregados_db' => 'required|array',
+            'valores_agregados_db.*' => 'required|string',
+        ]);
+
+        // Recupera los valores ingresados dinámicamente desde el formulario
+        $valores_agregados_db = $request->input('valores_agregados_db');
+
+        // Itera sobre los valores y guárdalos en la base de datos
+        foreach ($valores_agregados_db as $valor) {
+            // Crea una nueva instancia del modelo Dictionary
+            $dictionary = new customer_dictionary();
+            
+             // Asigna los valores al modelo
+        $dictionary->fk_customerID = $customerID; // Asigna el ID del cliente
+        $dictionary->value = $valor;
+
+            // Guarda el modelo en la base de datos
+            $dictionary->save();
+        }
+
         return redirect()->route('customer.index')->with(
             'success',
             'Los clusters han sido guardados correctamente ' . $customerID . ' ejecutado por ' . auth()->user()->name
