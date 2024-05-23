@@ -281,7 +281,7 @@ class CustomerController extends Controller
         }
         return redirect()->route('customer.index')->with(
             'success',
-            'Los clusters han sido guardados correctamente ' . $customerID . ' ejecutado por ' . auth()->user()->name
+            'Los clusters con id ' . $customerID . ' han sido guardados correctamente por ' . auth()->user()->name
         );
     }
 
@@ -330,53 +330,12 @@ class CustomerController extends Controller
         //    $Value->vms = $vms;
         //}
 
- // Obtener todos los clústeres
-        //$value = Vm::all() ?? collect();
-
-        //foreach ($value as $tfm) {
-        //    $hosts = VirtualHost::find($tfm->fk_datacenterID);
-        //    $tfm->hosts = $hosts;
-
-            // $vcenter = Vcenter::find($tfm->datacenter->fk_vcenterID);
-            // $tfm->datacenter->vcenter = $vcenter;
-        //}
-    
-        // Retorna la vista con el cliente y los clusters
+         // Retorna la vista con el cliente y los clusters
         return view('customer.customerDictionary', compact('customerID','virtualMachines','customerDictionaries'));
     }
     
     public function saveCustomerDictionary(Request $request, $customerID)
     {
-        //$valores_agregados = $request->input('valores_agregados');
-
-        // Obtener los IDs de los valores agregados
-         //$valor_ids = array_column($valores_agregados, 'id');
-
-
-        // Obtener los IDs de los clusters asociados al cliente actual
-        // $existing_cluster_ids = customer_cluster::where('fk_customerID', $customerID)
-        //     ->pluck('fk_clusterID')
-        //     ->toArray();
-
-        // Eliminar los cluster que ya no están en la lista de cluster agregados
-        // $clusters_a_eliminar = array_diff($existing_cluster_ids, $cluster_ids);
-        // if (!empty($clusters_a_eliminar)) {
-        //     //eliminar los clusters de la tabla customer_cluster
-        //     customer_cluster::where('fk_customerID', $customerID)
-        //         ->whereIn('fk_clusterID', $clusters_a_eliminar)
-        //         ->delete();
-        // }
-
-        // Agregar los vCenters que no estén ya asociados al cliente
-        // foreach ($cluster_agregados as $cluster) {
-        //     if (!in_array($cluster['id'], $existing_cluster_ids)) {
-        //         customer_cluster::create([
-        //             'fk_customerID' => $customerID,
-        //             'fk_clusterID' => $cluster['id']
-        //         ]);
-        //     }
-        // }
-
         // Valida los datos recibidos del formulario
         $request->validate([
             'valores_agregados_db' => 'required|array',
@@ -395,13 +354,14 @@ class CustomerController extends Controller
         $dictionary->fk_customerID = $customerID; // Asigna el ID del cliente
         $dictionary->value = $valor;
 
+        Log::info($dictionary);
             // Guarda el modelo en la base de datos
             $dictionary->save();
         }
 
         return redirect()->route('customer.index')->with(
             'success',
-            'el Diccionario han sido guardados correctamente ' . $customerID . ' ejecutado por ' . auth()->user()->name
+            'Los cambios con id ' . $customerID . 'en Dictionary, han sido guardados correctamente por ' . auth()->user()->name
         );
     }
 }
