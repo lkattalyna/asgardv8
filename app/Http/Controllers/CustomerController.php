@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\DB;
 
 use App\VirtualHost;
 use Illuminate\Contracts\View\Factory;
@@ -286,28 +287,44 @@ class CustomerController extends Controller
 
     public function customerDictionary(Request $request, $customerID)
     {
-        $customerVcenter = customer_vcenter::where('fk_customerID', $customerID)->firstOrFail();
-        Log::Info($customerVcenter);
-
-        $Vcenter = vcenter::where('vcenterID', $customerVcenter->fk_vcenterID)->firstOrFail();
-        Log::Info($Vcenter);
-
-        $datacenter = datacenter::where('fk_vcenterID', $Vcenter->vcenterID)->firstOrFail();
-        Log::Info($datacenter);
-
-        $cluster = cluster::where('fk_datacenterID', $datacenter->datacenterID)->firstOrFail();
-        Log::Info($cluster);
-
-        $vmhost = VmHost::where('fk_clusterID', $cluster->clusterID)->firstOrFail();
-        Log::Info($vmhost);
-
-        $vm = Vm::where('fk_vmhostID', $vmhost->vmhostID)->firstOrFail();
-        Log::Info($vm);
-
         // Obtener los asociados al cliente
-        $virtualMachines = Vm::get();
+        $virtualMachines = Vm::take(10)->get();
         
         $customerDictionaries = customer_dictionary::where('fk_customerID', $customerID)->get();
+        //foreach ($virtualMachines as $virtalMachine) {
+        //    $vms = Vm::where('clusterID', $Value->fk_clusterID)->first();
+        //    $Value->vms = $vms;
+        //}
+
+        $var = $request->input('service');
+
+        $virtualMachines = DB::table('central.segment as s')
+            ->select(
+                'v2.vmID',
+                'v2.vmObjectID',
+                'v2.vmName',
+                'v2.vmPowerState',
+                'v2.vmMemoryGB',
+                'v2.vmCpuCount',
+                'v2.vmProvisionedSpaceGB',
+                DB::raw("CONCAT(v.vcenterAlias, ' (', v.vcenterIp, ')') as vcenterAlias"),
+                'c.clusterName'
+            )
+            ->join('central.vcenter as v', 's.segmentID', '=', 'v.fk_segmentID')
+            ->join('central.datacenter as d', 'v.vcenterID', '=', 'd.fk_vcenterID')
+            ->join('central.cluster as c', 'd.datacenterID', '=', 'c.fk_datacenterID')
+            ->join('central.VmHost as vh', 'c.clusterID', '=', 'vh.fk_clusterID')
+            ->join('central.vm as v2', 'vh.vmhostID', '=', 'v2.fk_vmhostID')
+            ->where(function ($query) use ($var) {
+                $query->where('v2.vmName', 'like', "%$var%")
+                    ->orWhere('v2.vmHostName', 'like', "%$var%")
+                    ->orWhere('v2.vmIpAddress', 'like', "%$var%");
+            })
+            ->whereNull('v2.vmDeleted')
+            ->get();
+    
+        // Retorna la vista 
+        return view('customer.customerDictionary', compact('customerID','virtualMachines','customerDictionaries'));
         //foreach ($virtualMachines as $virtalMachine) {
         //    $vms = Vm::where('clusterID', $Value->fk_clusterID)->first();
         //    $Value->vms = $vms;

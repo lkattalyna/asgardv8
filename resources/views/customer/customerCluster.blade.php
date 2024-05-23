@@ -36,19 +36,20 @@
                     </td>
                     <div id="cluster-container">
                         @if($customerClusters === null || $customerClusters->isEmpty() || count($customerClusters) == 0)
-                        <p>No se han agregado clusters</p>
+                            <p>No se han agregado clusters</p>
                         @else
-                        <!-- Clústeres agregados dinámicamente -->
-                        @foreach ($customerClusters as $cluster)
-                        <div class="input-group">
-                            <input type="hidden" name="cluster_agregados[][id]" value="{{ $cluster->fk_clusterID }}" />
-                            <input class="form-control" name="cluster_agregados[][visible]"
-                                id="{{$cluster->fk_clusterID}}" value="{{ $cluster->clusterData->clusterName }}"
-                                disabled>
-                            <button class="btn btn-sm btn-danger ml-2"
-                                onclick="eliminarCluster('{{ $cluster->fk_clusterID }}')">Eliminar</button>
-                        </div>
-                        @endforeach
+                            <!-- Clústeres agregados dinámicamente -->
+                            @foreach ($customerClusters as $cluster)
+                                <div class="input-group">
+                                    <input type="hidden" name="cluster_agregados[][id]" value="{{ $cluster->fk_clusterID }}" />
+                                    <input class="form-control" name="cluster_agregados[][visible]"
+                                        id="{{$cluster->fk_clusterID}}"
+                                        value="{{ $cluster->clusterData->clusterName }}"
+                                        disabled>
+                                    <button class="btn btn-sm btn-danger ml-2"
+                                        onclick="eliminarCluster(event, '{{ $cluster->fk_clusterID }}')">Eliminar</button>
+                                </div>
+                            @endforeach
                         @endif
                     </div>
                     <!-- Botón de guardar -->
@@ -74,22 +75,22 @@
             </thead>
             <tbody>
                 @forelse ($clusters as $cluster)
-                <tr>
-                    <td>{{ $cluster->clusterID }}</td>
-                    <td>{{ $cluster->clusterName }}</td>
-                    <td>{{ $cluster->clusterTotalVm }}</td>
-                    <th>{{ $cluster->datacenter->vcenter->vcenterIp }}</th>
-                    <td>
-                        <a href="#" class="btn btn-sm btn-default"
-                            onclick="agregarCluster('{{ $cluster->clusterID }}', '{{ $cluster->clusterName }}')">
-                            <i class="fa fa-plus" style="color: red"></i>
-                        </a>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>{{ $cluster->clusterID }}</td>
+                        <td>{{ $cluster->clusterName }}</td>
+                        <td>{{ $cluster->clusterTotalVm }}</td>
+                        <th>{{ $cluster->datacenter->vcenter->vcenterIp }}</th>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-default"
+                                onclick="agregarCluster('{{ $cluster->clusterID }}', '{{ $cluster->clusterName }}')">
+                                <i class="fa fa-plus" style="color: red"></i>
+                            </a>
+                        </td>
+                    </tr>
                 @empty
-                <tr>
-                    <td colspan="5">No hay clusters disponibles</td>
-                </tr>
+                    <tr>
+                        <td colspan="5">No hay clusters disponibles</td>
+                    </tr>
                 @endforelse
             </tbody>
             <tfoot>
@@ -108,118 +109,118 @@
 
 @section('js')
 <script>
-$(document).ready(function() {
-    var table = $('#example1').DataTable({
-        "language": {
-            "sProcessing": "Procesando...",
-            "sLengthMenu": "Mostrar _MENU_ registros",
-            "sZeroRecords": "No se encontraron resultados",
-            "sEmptyTable": "Ningún dato disponible en esta tabla",
-            "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-            "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-            "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-            "sInfoPostFix": "",
-            "sSearch": "Buscar:",
-            "sUrl": "",
-            "sInfoThousands": ",",
-            "sLoadingRecords": "Cargando...",
-            "oPaginate": {
-                "sFirst": "Primero",
-                "sLast": "Último",
-                "sNext": "Siguiente",
-                "sPrevious": "Anterior"
+    $(document).ready(function () {
+        var table = $('#example1').DataTable({
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
             },
-            "oAria": {
-                "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-            }
-        },
-        "order": [
-            [0, "asc"]
-        ]
-    });
-
-    // Apply the search
-    table.columns().every(function() {
-        var that = this;
-
-        $('input', this.footer()).on('keyup change clear', function() {
-            if (that.search() !== this.value) {
-                that
-                    .search(this.value)
-                    .draw();
-            }
-        });
-    });
-
-    // Cargar botones para acciones de exportar de datatables
-    var buttons = new $.fn.dataTable.Buttons(table, {
-        buttons: [{
-            extend: 'copy',
-            text: 'Copiar',
-            className: 'btn btn-sm btn-default'
-        }, {
-            extend: 'print',
-            text: 'Imprimir',
-            className: 'btn btn-sm btn-default'
-        }, {
-            extend: 'collection',
-            className: 'btn btn-sm btn-default',
-            text: 'Exportar',
-            buttons: [
-                'csv',
-                'excel',
-                'pdf'
+            "order": [
+                [0, "asc"]
             ]
-        }]
-    }).container().appendTo('#btn_table');
-});
-
-// Script para ejecutar el modal de confirmación de borrado
-$('#confirm-delete').on('show.bs.modal', function(e) {
-    var formulario = createForm();
-
-    function createForm() {
-        var form = $('<form>', {
-            'method': 'POST',
-            'action': $(e.relatedTarget).data('href')
         });
 
-        var token = $('<input>', {
-            'type': 'hidden',
-            'name': '_token',
-            'value': '{{ csrf_token() }}'
+        // Apply the search
+        table.columns().every(function () {
+            var that = this;
+
+            $('input', this.footer()).on('keyup change clear', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
         });
 
-        var hiddenInput = $('<input>', {
-            'name': '_method',
-            'type': 'hidden',
-            'value': 'DELETE'
-        });
-
-        return form.append(token, hiddenInput).appendTo('body');
-    }
-    $(this).find('.btn-ok').on('click', function() {
-        formulario.submit();
+        // Cargar botones para acciones de exportar de datatables
+        var buttons = new $.fn.dataTable.Buttons(table, {
+            buttons: [{
+                extend: 'copy',
+                text: 'Copiar',
+                className: 'btn btn-sm btn-default'
+            }, {
+                extend: 'print',
+                text: 'Imprimir',
+                className: 'btn btn-sm btn-default'
+            }, {
+                extend: 'collection',
+                className: 'btn btn-sm btn-default',
+                text: 'Exportar',
+                buttons: [
+                    'csv',
+                    'excel',
+                    'pdf'
+                ]
+            }]
+        }).container().appendTo('#btn_table');
     });
-});
 
-function agregarCluster(id, alias) {
-    // Verificar si el cluster ya está presente
-    var clusterContainer = document.getElementById('cluster-container');
-    var alreadyAdded = false;
+    // Script para ejecutar el modal de confirmación de borrado
+    $('#confirm-delete').on('show.bs.modal', function (e) {
+        var formulario = createForm();
 
-    clusterContainer.querySelectorAll('input[name="cluster_agregados[][id]"]').forEach(function(input) {
-        if (input.value === id) {
-            alreadyAdded = true;
+        function createForm() {
+            var form = $('<form>', {
+                'method': 'POST',
+                'action': $(e.relatedTarget).data('href')
+            });
+
+            var token = $('<input>', {
+                'type': 'hidden',
+                'name': '_token',
+                'value': '{{ csrf_token() }}'
+            });
+
+            var hiddenInput = $('<input>', {
+                'name': '_method',
+                'type': 'hidden',
+                'value': 'DELETE'
+            });
+
+            return form.append(token, hiddenInput).appendTo('body');
         }
+        $(this).find('.btn-ok').on('click', function () {
+            formulario.submit();
+        });
     });
 
-    if (alreadyAdded) {
-        // Eliminar el modal existente si hay alguno
-        $('.modal').remove();
+    function agregarCluster(id, alias) {
+        // Verificar si el cluster ya está presente
+        var clusterContainer = document.getElementById('cluster-container');
+        var alreadyAdded = false;
 
-        var modalHtml = `
+        clusterContainer.querySelectorAll('input[name="cluster_agregados[][id]"]').forEach(function (input) {
+            if (input.value === id) {
+                alreadyAdded = true;
+            }
+        });
+
+        if (alreadyAdded) {
+            // Eliminar el modal existente si hay alguno
+            $('.modal').remove();
+
+            var modalHtml = `
         <div class="modal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -239,54 +240,56 @@ function agregarCluster(id, alias) {
             </div>
         </div>`;
 
-        // Convertir el HTML en un elemento del DOM
-        var modalElement = document.createRange().createContextualFragment(modalHtml);
+            // Convertir el HTML en un elemento del DOM
+            var modalElement = document.createRange().createContextualFragment(modalHtml);
 
-        // Agregar el modal al cuerpo del documento
-        document.body.appendChild(modalElement);
+            // Agregar el modal al cuerpo del documento
+            document.body.appendChild(modalElement);
 
-        // Mostrar el modal
-        $('.modal').modal('show');
+            // Mostrar el modal
+            $('.modal').modal('show');
 
-        return;
+            return;
+        }
+
+        // Si no está presente, agregarlo
+        var nuevoCriterioDiv = document.createElement('div');
+        nuevoCriterioDiv.classList.add('input-group');
+
+        var nuevoCriterioHidden = document.createElement('input');
+        nuevoCriterioHidden.name = 'cluster_agregados[][id]';
+        nuevoCriterioHidden.type = 'hidden';
+        nuevoCriterioHidden.value = id;
+
+        var nuevoCriterio = document.createElement('input');
+        nuevoCriterio.name = 'cluster_agregados[][visible]';
+        nuevoCriterio.classList.add('form-control');
+        nuevoCriterio.rows = 1;
+        nuevoCriterio.value = alias;
+        nuevoCriterio.id = id;
+        nuevoCriterio.disabled = true;
+
+        var eliminarCriterioBtn = document.createElement('button');
+        eliminarCriterioBtn.type = 'button';
+        eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
+        eliminarCriterioBtn.textContent = 'Eliminar';
+        eliminarCriterioBtn.addEventListener('click', function () {
+            eliminarCluster(event, id);
+        });
+
+        nuevoCriterioDiv.appendChild(nuevoCriterioHidden);
+        nuevoCriterioDiv.appendChild(nuevoCriterio);
+        nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
+        clusterContainer.appendChild(nuevoCriterioDiv);
     }
 
-    // Si no está presente, agregarlo
-    var nuevoCriterioDiv = document.createElement('div');
-    nuevoCriterioDiv.classList.add('input-group');
-
-    var nuevoCriterioHidden = document.createElement('input');
-    nuevoCriterioHidden.name = 'cluster_agregados[][id]';
-    nuevoCriterioHidden.type = 'hidden';
-    nuevoCriterioHidden.value = id;
-
-    var nuevoCriterio = document.createElement('input');
-    nuevoCriterio.name = 'cluster_agregados[][visible]';
-    nuevoCriterio.classList.add('form-control');
-    nuevoCriterio.rows = 1;
-    nuevoCriterio.value = alias;
-    nuevoCriterio.id = id;
-    nuevoCriterio.disabled = true;
-
-    var eliminarCriterioBtn = document.createElement('button');
-    eliminarCriterioBtn.type = 'button';
-    eliminarCriterioBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'ml-2');
-    eliminarCriterioBtn.textContent = 'Eliminar';
-    eliminarCriterioBtn.addEventListener('click', function() {
-        // Remover el div contenedor del botón eliminar
-        this.parentNode.parentNode.removeChild(this.parentNode);
-    });
-
-    nuevoCriterioDiv.appendChild(nuevoCriterioHidden);
-    nuevoCriterioDiv.appendChild(nuevoCriterio);
-    nuevoCriterioDiv.appendChild(eliminarCriterioBtn);
-    clusterContainer.appendChild(nuevoCriterioDiv);
-}
-
-function eliminarCluster(id) {
-    // Eliminar el div contenedor del cluster
-    var divToRemove = document.getElementById(id).parentNode;
-    divToRemove.parentNode.removeChild(divToRemove);
-}
+    function eliminarCluster(event, id) {
+        event.preventDefault();
+        if (confirm('¿Seguro que quiere eliminar el cluster?')) {
+            // Eliminar el div contenedor del cluster
+            var divToRemove = document.getElementById(id).parentNode;
+            divToRemove.parentNode.removeChild(divToRemove);
+        }
+    }
 </script>
 @stop

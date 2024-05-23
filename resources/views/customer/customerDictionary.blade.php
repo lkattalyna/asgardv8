@@ -93,7 +93,7 @@
 </div>
 <div class="card card-default">
     <div class="card-body">
-        <table id="example1" class="table table-striped table-bordered">
+        <table id="example1" class="table table-striped table-bordered" style="display: none;">
             <thead>
                 <tr>
                     <th>Nombre Maquina</th>
@@ -115,8 +115,8 @@
                     <?php } ?>
                     <td>{{ $virtualMachine->vmMemoryGB }}</td>
                     <th>{{ $virtualMachine->vmCpuCount}}</th>
-                    <th></th>
-                    <th></th>
+                    <td>{{ $virtualMachine->clusterName }}</td>
+                    <td>{{ $virtualMachine->vmName }}</td>
 
                 </tr>
                 @empty
@@ -140,20 +140,18 @@
 </div>
 @stop
 
-
-
 @section('js')
 <script>
 $(document).ready(function() {
     var table = $('#example1').DataTable({
         "language": {
             "sProcessing": "Procesando...",
-            "sLengthMenu": "Mostrar _MENU_ registros",
+            "sLengthMenu": "Mostrar MENU registros",
             "sZeroRecords": "No se encontraron resultados",
             "sEmptyTable": "Ningún dato disponible en esta tabla",
-            "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+            "sInfo": "Mostrando registros del START al END de un total de TOTAL registros",
             "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-            "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "sInfoFiltered": "(filtrado de un total de MAX registros)",
             "sInfoPostFix": "",
             "sSearch": "Buscar:",
             "sUrl": "",
@@ -209,6 +207,11 @@ $(document).ready(function() {
             ]
         }]
     }).container().appendTo('#btn_table');
+
+    // Mostrar la tabla al hacer clic en el botón de búsqueda
+    $('#ejecutar').on('click', function() {
+        $('#example1').show();
+    });
 });
 
 // Script para ejecutar el modal de confirmación de borrado
