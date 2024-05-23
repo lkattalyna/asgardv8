@@ -401,7 +401,7 @@ class CustomerController extends Controller
 
         return redirect()->route('customer.index')->with(
             'success',
-            'Los clusters han sido guardados correctamente ' . $customerID . ' ejecutado por ' . auth()->user()->name
+            'el Diccionario han sido guardados correctamente ' . $customerID . ' ejecutado por ' . auth()->user()->name
         );
     }
 }
