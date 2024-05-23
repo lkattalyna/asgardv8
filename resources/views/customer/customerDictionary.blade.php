@@ -149,9 +149,9 @@ $(document).ready(function() {
             "sLengthMenu": "Mostrar MENU registros",
             "sZeroRecords": "No se encontraron resultados",
             "sEmptyTable": "Ningún dato disponible en esta tabla",
-            "sInfo": "Mostrando registros del START al END de un total de TOTAL registros",
+            "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
             "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-            "sInfoFiltered": "(filtrado de un total de MAX registros)",
+            "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
             "sInfoPostFix": "",
             "sSearch": "Buscar:",
             "sUrl": "",
@@ -170,7 +170,26 @@ $(document).ready(function() {
         },
         "order": [
             [0, "asc"]
-        ]
+        ],
+        "search": {
+            "smart": false //desactivar la busqueda inteligente para coincidencias exactas
+        }
+    });
+    // Agregar evento para la búsqueda
+    $('#service').on('keyup', function() {
+        var searchString = $(this).val().trim();
+        
+        // Ocultar la tabla si no hay términos de búsqueda
+        if (searchString === '') {
+            $('#example1').hide();
+            return;
+        }
+        
+        // Realizar la búsqueda y mostrar solo los resultados coincidentes
+        table.search(searchString).draw();
+        
+        // Mostrar la tabla después de la búsqueda
+        $('#example1').show();
     });
 
     // Apply the search
