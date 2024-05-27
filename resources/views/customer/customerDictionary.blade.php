@@ -8,6 +8,13 @@
 @section('plugins.Datatables', true)
 
 @section('content')
+<style>
+    .paginacion{
+    display: none;
+    
+}
+</style>
+
     <div class="card card-default">
         <div class="card-body">
             <div class="float-sm-right">
@@ -96,7 +103,7 @@
             </table>
         </div>
     </div>
-    <div class="card card-default">
+    <div class="card card-default paginacion">
         <div class="card-body">
             <table id="example1" class="table table-striped table-bordered" style="display: none;">
                 <thead>
@@ -237,6 +244,8 @@
             // Mostrar la tabla y la paginación al hacer clic en el botón de búsqueda
             $('#ejecutar').on('click', function() {
                 var searchString = $('#service').val().trim();
+                var contenedorTable = document.querySelector('.paginacion');
+                contenedorTable.style.display = 'flex';
 
                 if (searchString !== '') {
                     table.search(searchString).draw();
@@ -248,6 +257,8 @@
             // Ocultar la tabla y la paginación si no hay términos de búsqueda en la entrada
             $('#service').on('keyup', function() {
                 var searchString = $(this).val().trim();
+                var contenedorTable = document.querySelector('.paginacion');
+                contenedorTable.style.display = 'none';
 
                 if (searchString === '') {
                     $('#example1').hide();

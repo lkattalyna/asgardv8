@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\DB;
 
 use App\VirtualHost;
@@ -289,7 +290,7 @@ class CustomerController extends Controller
     {
         // Obtener los asociados al cliente
         $virtualMachines = Vm::take(10)->get();
-        
+
         $customerDictionaries = customer_dictionary::where('fk_customerID', $customerID)->get();
         //foreach ($virtualMachines as $virtalMachine) {
         //    $vms = Vm::where('clusterID', $Value->fk_clusterID)->first();
@@ -322,18 +323,18 @@ class CustomerController extends Controller
             })
             ->whereNull('v2.vmDeleted')
             ->get();
-    
+
         // Retorna la vista 
-        return view('customer.customerDictionary', compact('customerID','virtualMachines','customerDictionaries'));
+        return view('customer.customerDictionary', compact('customerID', 'virtualMachines', 'customerDictionaries'));
         //foreach ($virtualMachines as $virtalMachine) {
         //    $vms = Vm::where('clusterID', $Value->fk_clusterID)->first();
         //    $Value->vms = $vms;
         //}
 
-         // Retorna la vista con el cliente y los clusters
-        return view('customer.customerDictionary', compact('customerID','virtualMachines','customerDictionaries'));
+        // Retorna la vista con el cliente y los clusters
+        return view('customer.customerDictionary', compact('customerID', 'virtualMachines', 'customerDictionaries'));
     }
-    
+
     public function saveCustomerDictionary(Request $request, $customerID)
     {
         // Valida los datos recibidos del formulario
@@ -345,23 +346,27 @@ class CustomerController extends Controller
         // Recupera los valores ingresados dinámicamente desde el formulario
         $valores_agregados_db = $request->input('valores_agregados_db');
 
+        // Elimina los registros existentes para el cliente
+        customer_dictionary::where('fk_customerID', $customerID)->delete();
+
         // Itera sobre los valores y guárdalos en la base de datos
         foreach ($valores_agregados_db as $valor) {
             // Crea una nueva instancia del modelo Dictionary
             $dictionary = new customer_dictionary();
-            
-             // Asigna los valores al modelo
-        $dictionary->fk_customerID = $customerID; // Asigna el ID del cliente
-        $dictionary->value = $valor;
 
-        Log::info($dictionary);
+            // Asigna los valores al modelo
+            $dictionary->fk_customerID = $customerID; // Asigna el ID del cliente
+            $dictionary->value = $valor;
+
+            Log::info($dictionary);
+
             // Guarda el modelo en la base de datos
             $dictionary->save();
         }
 
         return redirect()->route('customer.index')->with(
             'success',
-            'Los cambios con id ' . $customerID . 'en Dictionary, han sido guardados correctamente por ' . auth()->user()->name
+            'Los cambios con id ' . $customerID . ' en Dictionary, han sido guardados correctamente por ' . auth()->user()->name
         );
     }
 }
