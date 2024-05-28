@@ -11,10 +11,9 @@
 <style>
     .paginacion{
     display: none;
-    
+   
 }
 </style>
-
     <div class="card card-default">
         <div class="card-body">
             <div class="float-sm-right">
@@ -27,46 +26,30 @@
     @include('layouts.formError')
     <div class="card card-default">
         <div class="card-body">
-            <form id="formulario_Dictionary" method="POST"
-                action="{{ route('customer.saveCustomerDictionary', ['customerID' => $customerID]) }}"
-                enctype="multipart/form-data">
-                @csrf
-                @method('POST')
-                {{ csrf_field() }}
+        <form id="formulario_Dictionary" method="POST" action="{{ route('customer.saveCustomerDictionary', ['customerID' => $customerID]) }}" enctype="multipart/form-data">
+    @csrf
+    @method('POST')
 
-                <div class="card card-default">
-                    <div class="card-header with-border">
-                        <p>Este formulario permitirá realizar la segregación por Diccionario</p>
-                    </div>
-                    <div class="card-body" style="width: 25%;">
-                        <td>
-                            <label for="guardarValor" class="col-form-label">{{ _('VALORES AGREGADOS') }}</label>
-                        </td>
-                        <div id="Dictionary-container">
-                            @if ($customerDictionaries === null || $customerDictionaries->isEmpty() || count($customerDictionaries) == 0)
-                                <p>No hay información de la consulta</p>
-                            @else
-                                <!-- dinámicamente -->
-                                @foreach ($customerDictionaries as $customerDictionary)
-                                    <div class="input-group">
-                                        <input type="hidden" name="valores_agregados[][id]"
-                                            value="{{ $customerDictionary->fk_customerID }}" />
-                                        <input class="form-control" name="valores_agregados[][visible]"
-                                            id="{{ $customerDictionary->value }}" value="{{ $customerDictionary->value }}"
-                                            disabled>
-                                        <button class="btn btn-sm btn-danger ml-2"
-                                            onclick="eliminarValor('{{ $customerDictionary->customerdictionaryID }}')">Eliminar</button>
-                                    </div>
-                                @endforeach
-                            @endif
-                        </div>
-                        <!-- Botón de guardar -->
-                        <button type="submit" class="btn btn-sm btn-danger">
-                            <i class="fa fa-save"></i> Guardar
-                        </button>
-                    </div>
+    <div id="Dictionary-container">
+        <input type="hidden" name="valores_agregados_db[]" value="" />
+        @if ($customerDictionaries === null || $customerDictionaries->isEmpty() || count($customerDictionaries) == 0)
+            <p>No hay información de la consulta</p>
+        @else
+            @foreach ($customerDictionaries as $customerDictionary)
+                <div class="input-group mb-2" id="val-{{ $customerDictionary->customerdictionaryID }}">
+                    <input type="hidden" name="valores_agregados_db[]" value="{{ $customerDictionary->value }}" />
+                    <input class="form-control" name="valores_agregados[]" value="{{ $customerDictionary->value }}" disabled />
+                    <button class="btn btn-sm btn-danger ml-2" type="button" onclick="eliminarValor(event, 'val-{{ $customerDictionary->customerdictionaryID }}')">Eliminar</button>
                 </div>
-            </form>
+            @endforeach
+        @endif
+    </div>
+    
+    <button type="submit" class="btn btn-sm btn-danger">
+        <i class="fa fa-save"></i> Guardar
+    </button>
+</form>
+
         </div>
     </div>
     <div class="card card-default">
@@ -154,53 +137,79 @@
 
 @section('js')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('agregar').addEventListener('click', function() {
-                var service = document.getElementById('service').value.trim();
-                if (service) {
-                    // Crear un nuevo div con la clase input-group
-                    var newInputGroup = document.createElement('div');
-                    newInputGroup.className = 'input-group mb-2';
-
-                    // Crear el input visible, deshabilitado
-                    var newInput = document.createElement('input');
-                    newInput.setAttribute('type', 'text');
-                    newInput.setAttribute('name', 'valores_agregados[]');
-                    newInput.setAttribute('value', service);
-                    newInput.setAttribute('class', 'form-control');
-                    newInput.setAttribute('disabled', 'disabled');
-
-                    // Crear el campo de entrada oculto para almacenar el valor en la base de datos
-                    var hiddenInput = document.createElement('input');
-                    hiddenInput.setAttribute('type', 'hidden');
-                    hiddenInput.setAttribute('name',
-                    'valores_agregados_db[]'); // Nombre diferente para diferenciarlo
-                    hiddenInput.setAttribute('value', service);
-
-                    // Crear el botón de eliminar
-                    var deleteButton = document.createElement('button');
-                    deleteButton.className = 'btn btn-sm btn-danger ml-2';
-                    deleteButton.innerText = 'Eliminar';
-                    deleteButton.type = 'button';
-                    deleteButton.onclick = function() {
-                        newInputGroup.remove(); // Eliminar el div que contiene los elementos
-                    };
-
-                    // Añadir los elementos al div
-                    newInputGroup.appendChild(newInput);
-                    newInputGroup.appendChild(hiddenInput); // Agregar el campo oculto
-                    newInputGroup.appendChild(deleteButton);
-
-                    // Añadir el nuevo div al contenedor
-                    document.getElementById('Dictionary-container').appendChild(newInputGroup);
-
-                    // Limpiar el input de búsqueda después de agregar
-                    document.getElementById('service').value = '';
-                } else {
-                    alert('Por favor, ingrese un valor para agregar.');
-                }
-            });
+     document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('formulario_Dictionary').addEventListener('submit', function(event) {
+        var hiddenInputs = document.querySelectorAll('input[name="valores_agregados_db[]"]');
+        
+        hiddenInputs.forEach(function(input) {
+            if (input.value.trim() === '') {
+                input.parentNode.removeChild(input);
+            }
         });
+
+        // Asegurar que el array `valores_agregados_db[]` esté siempre definido
+        if (hiddenInputs.length === 0) {
+            var emptyInput = document.createElement('input');
+            emptyInput.setAttribute('type', 'hidden');
+            emptyInput.setAttribute('name', 'valores_agregados_db[]');
+            emptyInput.setAttribute('value', '');
+            this.appendChild(emptyInput);
+        }
+    });
+
+    document.getElementById('agregar').addEventListener('click', function() {
+        var service = document.getElementById('service').value.trim();
+        if (service) {
+            var newInputGroup = document.createElement('div');
+            newInputGroup.className = 'input-group mb-2';
+            var uniqueId = 'val-' + service.replace(/\s+/g, '-');
+            newInputGroup.setAttribute('id', uniqueId);
+
+            var newInput = document.createElement('input');
+            newInput.setAttribute('type', 'text');
+            newInput.setAttribute('name', 'valores_agregados[]');
+            newInput.setAttribute('value', service);
+            newInput.setAttribute('class', 'form-control');
+            newInput.setAttribute('disabled', 'disabled');
+
+            var hiddenInput = document.createElement('input');
+            hiddenInput.setAttribute('type', 'hidden');
+            hiddenInput.setAttribute('name', 'valores_agregados_db[]');
+            hiddenInput.setAttribute('value', service);
+
+            var deleteButton = document.createElement('button');
+            deleteButton.className = 'btn btn-sm btn-danger ml-2';
+            deleteButton.innerText = 'Eliminar';
+            deleteButton.type = 'button';
+            deleteButton.onclick = function() {
+                eliminarValor(event, uniqueId);
+            };
+
+            newInputGroup.appendChild(newInput);
+            newInputGroup.appendChild(hiddenInput);
+            newInputGroup.appendChild(deleteButton);
+            document.getElementById('Dictionary-container').appendChild(newInputGroup);
+            document.getElementById('service').value = '';
+        } else {
+            alert('Por favor, ingrese un valor para agregar.');
+        }
+    });
+});
+
+function eliminarValor(event, id) {
+    event.preventDefault();
+    var elementToRemove = document.getElementById(id);
+    if (elementToRemove) {
+        if (confirm('¿Seguro que quiere eliminar este valor?')) {
+            elementToRemove.parentNode.removeChild(elementToRemove);
+        }
+    } else {
+        console.error('Elemento con ID ' + id + ' no encontrado en el DOM.');
+    }
+}
+
+
+
 
 
         $(document).ready(function() {
@@ -214,9 +223,9 @@
                     "sLengthMenu": "Mostrar MENU registros",
                     "sZeroRecords": "No se encontraron resultados",
                     "sEmptyTable": "Ningún dato disponible en esta tabla",
-                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfo": "Mostrando registros del START al END de un total de TOTAL registros",
                     "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                    "sInfoFiltered": "(filtrado de un total de MAX registros)",
                     "sInfoPostFix": "",
                     "sSearch": "Buscar:",
                     "sUrl": "",
@@ -246,7 +255,7 @@
                 var searchString = $('#service').val().trim();
                 var contenedorTable = document.querySelector('.paginacion');
                 contenedorTable.style.display = 'flex';
-
+ 
                 if (searchString !== '') {
                     table.search(searchString).draw();
                     $('#example1').show();
@@ -259,7 +268,7 @@
                 var searchString = $(this).val().trim();
                 var contenedorTable = document.querySelector('.paginacion');
                 contenedorTable.style.display = 'none';
-
+ 
                 if (searchString === '') {
                     $('#example1').hide();
                     $('.dataTables_paginate').hide();
@@ -408,14 +417,22 @@
             Dictionary - container.appendChild(nuevoCriterioDiv);
         }
 
-        function eliminarValor(ievent, id) {
-            event.preventDefault();
-            if (confirm('¿Seguro que quiere eliminar este valor?')) {
-                // Eliminar el div contenedor del cluster
-                var divToRemove = document.getElementById(id).parentNode;
-                divToRemove.parentNode.removeChild(divToRemove);
-            }
+        function eliminarValor(event, id) {
+    event.preventDefault();
+    var elementToRemove = document.getElementById(id);
+    if (elementToRemove) {
+        if (confirm('¿Seguro que quiere eliminar este valor?')) {
+            elementToRemove.parentNode.removeChild(elementToRemove);
         }
+    } else {
+        console.error('Elemento con ID ' + id + ' no encontrado en el DOM.');
+    }
+}
+
+
+
+
+
     </script>
 
 @stop

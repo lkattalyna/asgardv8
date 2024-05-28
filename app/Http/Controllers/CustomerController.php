@@ -336,21 +336,24 @@ class CustomerController extends Controller
     }
 
     public function saveCustomerDictionary(Request $request, $customerID)
-    {
-        // Valida los datos recibidos del formulario
-        $request->validate([
-            'valores_agregados_db' => 'required|array',
-            'valores_agregados_db.*' => 'required|string',
-        ]);
+{
+    // Valida los datos recibidos del formulario
+    $request->validate([
+        'valores_agregados_db' => 'nullable|array',
+        'valores_agregados_db.*' => 'nullable|string|max:255',
+    ]);
 
-        // Recupera los valores ingresados dinámicamente desde el formulario
-        $valores_agregados_db = $request->input('valores_agregados_db');
+    // Recupera los valores ingresados dinámicamente desde el formulario
+    // Asegura que valores_agregados_db esté definido como un array
+    $valores_agregados_db = $request->input('valores_agregados_db', []);
 
-        // Elimina los registros existentes para el cliente
-        customer_dictionary::where('fk_customerID', $customerID)->delete();
+    // Elimina los registros existentes para el cliente
+    customer_dictionary::where('fk_customerID', $customerID)->delete();
 
-        // Itera sobre los valores y guárdalos en la base de datos
-        foreach ($valores_agregados_db as $valor) {
+    // Itera sobre los valores y guárdalos en la base de datos
+    foreach ($valores_agregados_db as $valor) {
+        // Verifica que el valor no sea nulo o vacío
+        if (!is_null($valor) && $valor !== '') {
             // Crea una nueva instancia del modelo Dictionary
             $dictionary = new customer_dictionary();
 
@@ -358,15 +361,15 @@ class CustomerController extends Controller
             $dictionary->fk_customerID = $customerID; // Asigna el ID del cliente
             $dictionary->value = $valor;
 
-            Log::info($dictionary);
-
             // Guarda el modelo en la base de datos
             $dictionary->save();
         }
-
-        return redirect()->route('customer.index')->with(
-            'success',
-            'Los cambios con id ' . $customerID . ' en Dictionary, han sido guardados correctamente por ' . auth()->user()->name
-        );
     }
+
+    return redirect()->route('customer.index')->with(
+        'success',
+        'Los cambios con id ' . $customerID . ' en Dictionary, han sido guardados correctamente por ' . auth()->user()->name
+    );
+}
+
 }
