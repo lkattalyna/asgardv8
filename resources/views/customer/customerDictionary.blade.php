@@ -30,7 +30,7 @@
     @csrf
     @method('POST')
 
-    <div id="Dictionary-container">
+    <div id="Dictionary-container" style="width: 25%;">
         <input type="hidden" name="valores_agregados_db[]" value="" />
         @if ($customerDictionaries === null || $customerDictionaries->isEmpty() || count($customerDictionaries) == 0)
             <p>No hay información de la consulta</p>
