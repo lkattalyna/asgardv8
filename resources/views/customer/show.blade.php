@@ -338,9 +338,18 @@
     }
 
     function eliminarVcenter(id) {
+    // Mostrar un cuadro de diálogo de confirmación
+    var confirmacion = confirm("¿Estás seguro de que quieres eliminar este elemento?");
+    
+    // Si el usuario confirma la eliminación
+    if (confirmacion) {
         // Eliminar el div contenedor del vcenter
         var divToRemove = document.getElementById(id).parentNode;
         divToRemove.parentNode.removeChild(divToRemove);
     }
+
+    
+}
+
 </script>
 @stop
