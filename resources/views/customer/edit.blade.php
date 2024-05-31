@@ -52,7 +52,7 @@
                         </th>
                         <td>
                             <div class="input-group">
-                                <input type="text" name="customerNIT" id="customerNIT" class="form-control" placeholder="NIT del Cliente" maxlength="10" value="{{ old('customerNIT', $customer->customerNIT) }}" required>
+                                <input type="text" name="customerNIT" id="customerNIT" class="form-control" placeholder="NIT del Cliente" maxlength="10" value="{{ old('customerNIT', $customer->customerNIT) }}" readonly>
                                 <div class="input-group-append">
                                     <span class="input-group-text" data-toggle="popover" data-html="true" data-placement="left" title="Ayuda" data-content="Indique el NIT del cliente">
                                         <i class="fas fa-question-circle"></i>
